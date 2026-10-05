@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Volleyball Tactic</title>
+<title>Set Theory</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
@@ -297,8 +297,8 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
   <aside class="panel">
     <header class="brand">
-      <h1>Volleyball <span>Tactic</span></h1>
-      <p>Plan rotations, serve receive, attack and defense.</p>
+      <h1>Set <span>Theory</span></h1>
+      <p>Volleyball rotations, serve receive, attack and defense.</p>
     </header>
 
     <div class="note import" id="importBanner" hidden>
@@ -429,6 +429,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   const NS = 'http://www.w3.org/2000/svg';
   const VB = { x: -2.5, y: -2, w: 14, h: 22 };
   const R = 0.44;
+  // Keeps the app's original name on purpose: renaming it would wipe every board already saved in people's browsers.
   const KEY = 'volleyball-tactic-board-v1';
   const ROLES = [
     ['S', 'Setter'], ['OH', 'Outside'], ['MB', 'Middle'], ['OPP', 'Opposite'],
@@ -1480,7 +1481,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     const blob = new Blob([JSON.stringify(sharePayload($('#shareCourt').checked), null, 1)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'volleyball-tactic.json';
+    a.download = 'set-theory.json';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   };
@@ -1491,7 +1492,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     if (!f) return;
     let d = null;
     try { d = parsePayload(JSON.parse(await f.text())); } catch (err) {}
-    if (!d) return toast('That file isn’t a Volleyball Tactic save file.');
+    if (!d) return toast('That file isn’t a Set Theory save file.');
     applyShared(d);
   };
 
