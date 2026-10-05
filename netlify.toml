@@ -1,0 +1,3 @@
+# Netlify deploys this repo on every push to main. The app is one static file, so there is no build step.
+[build]
+  publish = "."
