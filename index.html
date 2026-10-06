@@ -1,4 +1,7 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e9edf3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e131b" media="(prefers-color-scheme: dark)">
 <title>Set Theory</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,6 +59,7 @@
 }
 
 html, body { height: 100%; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body {
   background: var(--bg); color: var(--fg);
   font-family: var(--font-body); font-size: 15px; line-height: 1.45;
@@ -63,6 +67,7 @@ body {
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 button, input, select { font: inherit; color: inherit; }
+button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 .app { display: grid; grid-template-columns: minmax(0, 1fr) 380px; height: 100%; }
@@ -76,7 +81,7 @@ button, input, select { font: inherit; color: inherit; }
   font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: .02em;
   color: var(--muted); display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
 }
-.seg button:hover { color: var(--fg); }
+@media (hover: hover) { .seg button:hover { color: var(--fg); } }
 .seg button[aria-pressed="true"] { background: var(--fg); color: var(--panel); }
 .seg button svg { width: 16px; height: 16px; flex: none; }
 kbd {
@@ -113,13 +118,15 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: .02em; white-space: nowrap;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
 }
-.btn:hover { border-color: var(--muted); }
+@media (hover: hover) { .btn:hover { border-color: var(--muted); } }
 .btn:disabled { opacity: .4; cursor: default; }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .btn.primary:hover { filter: brightness(1.06); }
 .btn.danger { color: var(--danger); }
 .btn.danger.armed { background: var(--danger); border-color: var(--danger); color: #fff; }
 .btn.small { padding: 5px 9px; font-size: 14px; }
+.btn svg { width: 15px; height: 15px; flex: none; }
+.btn small { font-family: var(--font-body); font-weight: 500; font-size: 12px; opacity: .75; font-variant-numeric: tabular-nums; }
 .team-seg { width: 100%; }
 .team-seg button { flex: 1; justify-content: center; }
 .hint { margin: 0; color: var(--muted); font-size: 13px; }
@@ -153,6 +160,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 .keys { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 12.5px; color: var(--muted); margin: 0; }
 .keys dt { font-family: var(--font-display); font-weight: 600; color: var(--fg); }
 .keys dd { margin: 0; }
+.touch-only, .m-only, .m-slot { display: none; }
 
 /* Scenarios */
 .scen-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
@@ -216,6 +224,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   font-family: var(--font-display); font-weight: 600; font-size: .4px; text-anchor: middle; fill: #fff;
   stroke: rgba(10, 14, 20, .78); stroke-width: .13px; stroke-linejoin: round; paint-order: stroke; pointer-events: none;
 }
+.player .hit { fill: transparent; }
 .player .ring { fill: rgba(255,255,255,.22); stroke: #fff; stroke-width: .07px; stroke-dasharray: .22 .13; opacity: 0; }
 .player.selected .ring { opacity: 1; }
 .arrow .hit { stroke: transparent; stroke-width: .55px; cursor: pointer; }
@@ -234,15 +243,76 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 }
 #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* Touch screens: finger-sized controls, 16px inputs so iOS doesn't zoom on focus, gesture list instead of shortcuts */
+@media (pointer: coarse) {
+  .seg button { min-height: 40px; }
+  .btn { min-height: 42px; }
+  .btn.small { min-height: 38px; }
+  .rt { min-height: 36px; }
+  .x { width: 36px; height: 36px; }
+  .sq-row, .f-row { grid-template-columns: minmax(0, 1fr) auto 36px; }
+  .f-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 36px; }
+  input[type="text"], select, .sq-row input[type="text"], .f-row select { font-size: 16px; }
+  .check input { width: 20px; height: 20px; }
+  .check { min-height: 32px; }
+  .roster li button { padding: 8px 6px; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .mouse-only { display: none; }
+  .touch-only { display: revert; }
+  .keys.touch-only { display: grid; }
+}
+
+/* Phones and narrow tablets: one column. App name on top, then tools, scenarios, the court
+   sized to fit the screen, the selected player's editor just under it, and the panel below. */
 @media (max-width: 820px) {
   html, body { height: auto; }
   .app { grid-template-columns: 1fr; height: auto; }
-  .stage { padding: 12px 16px; }
-  .court-wrap { flex: none; }
-  #board { height: auto; max-height: 76vh; }
-  .panel { border-left: 0; border-top: 1px solid var(--line); padding: 20px 16px 32px; }
+  .stage {
+    gap: 10px;
+    padding: max(10px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 14px max(16px, env(safe-area-inset-left));
+  }
+  .m-slot { display: block; }
+  .m-slot:empty { display: none; }
+  .m-only { display: inline-flex; }
+  .m-slot .brand { align-items: center; }
+  .m-slot .brand h1 { font-size: 26px; }
+  .m-slot .brand p { display: none; }
+  .toolbar { flex-wrap: nowrap; gap: 6px; }
+  .toolbar .row { flex-wrap: nowrap; gap: 6px; }
   .seg button { padding: 6px 9px; }
   .seg kbd { display: none; }
+  .scen-bar { gap: 6px; }
+  .scen-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .scen-bar .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+  .scen-bar .seg button { justify-content: center; padding: 6px 4px; }
+  #scenCaption { font-size: 12.5px; line-height: 1.35; }
+  .court-wrap { flex: none; }
+  #board { height: auto; max-height: max(400px, calc(100svh - 196px)); }
+  .dock > .sec { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; }
+  .dock > .sec > h2 { display: none; }
+  .dock .empty-sel { display: none; }
+  .panel { border-left: 0; border-top: 1px solid var(--line); padding: 22px max(16px, env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+}
+/* Small phones: icon-only tools so the bar stays on one line */
+@media (max-width: 480px) {
+  .toolbar .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .toolbar .seg button { padding: 6px 11px; }
+  .toolbar .btn.small { padding: 5px 10px; }
+  .toolbar .btn small { display: none; }
+}
+@media (max-width: 340px) {
+  .toolbar .seg button { padding: 6px 8px; }
+  .toolbar .btn.small { padding: 5px 8px; }
+}
+/* Phones turned sideways: keep the side panel, but slimmer, and squeeze the bars above the court */
+@media (orientation: landscape) and (max-height: 520px) and (min-width: 821px) {
+  .app { grid-template-columns: minmax(0, 1fr) 330px; }
+  .stage { gap: 6px; padding: 8px 10px 8px max(12px, env(safe-area-inset-left)); }
+  .seg button { padding: 4px 9px; }
+  .seg kbd, #scenCaption, .scen-label { display: none; }
+  .scen-bar .seg button { padding: 4px 8px; font-size: 13px; }
+  .panel { padding: 14px max(14px, env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) 14px; gap: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
   #board.animating .player { transition: none; }
@@ -255,21 +325,27 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 </script>
 <div class="app">
   <main class="stage">
+    <div class="m-slot" id="slotBrand"></div>
     <div class="toolbar" role="toolbar" aria-label="Court tools">
       <div class="seg" id="tools">
         <button type="button" data-tool="select" aria-pressed="true">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 2l9 5-4 1.2L6.5 13z" stroke-linejoin="round"/></svg>
-          Move <kbd>V</kbd></button>
+          <span class="lbl">Move</span> <kbd>V</kbd></button>
         <button type="button" data-tool="run" aria-pressed="false">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 13L13 3M7 3h6v6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Run arrow <kbd>A</kbd></button>
+          <span class="lbl">Run arrow</span> <kbd>A</kbd></button>
         <button type="button" data-tool="ball" aria-pressed="false">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 13L13 3" stroke-dasharray="2.4 2" stroke-linecap="round"/><path d="M7 3h6v6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Ball path <kbd>B</kbd></button>
+          <span class="lbl">Ball path</span> <kbd>B</kbd></button>
       </div>
       <div class="row">
-        <button type="button" class="btn small" id="undo" title="Undo (Ctrl/⌘ Z)">Undo</button>
-        <button type="button" class="btn small" id="redo" title="Redo (Shift Ctrl/⌘ Z)">Redo</button>
+        <button type="button" class="btn small" id="undo" title="Undo (Ctrl/⌘ Z)" aria-label="Undo">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 3L2.5 6l3 3M3 6h6.5a4 4 0 010 8H7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="lbl">Undo</span></button>
+        <button type="button" class="btn small" id="redo" title="Redo (Shift Ctrl/⌘ Z)" aria-label="Redo">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10.5 3l3 3-3 3M13 6H6.5a4 4 0 000 8H9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="lbl">Redo</span></button>
+        <button type="button" class="btn small primary m-only" id="quickRotate" title="Rotate home one zone clockwise">↻ Rotate <small id="quickRot"></small></button>
       </div>
     </div>
     <div class="scen-bar">
@@ -301,6 +377,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
         <g id="overlayLayer"></g>
       </svg>
     </div>
+    <div class="m-slot dock" id="slotDock"></div>
   </main>
 
   <aside class="panel">
@@ -366,7 +443,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       <button type="button" class="btn" id="addSix">Add a full six (5-1, rotation 1)</button>
     </section>
 
-    <section class="sec" aria-labelledby="selH">
+    <section class="sec" id="selSec" aria-labelledby="selH">
       <h2 id="selH">Selected</h2>
       <div id="editor"></div>
     </section>
@@ -391,8 +468,16 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     </section>
 
     <section class="sec" aria-labelledby="keysH">
-      <h2 id="keysH">Shortcuts</h2>
-      <dl class="keys">
+      <h2 id="keysH"><span class="mouse-only">Shortcuts</span><span class="touch-only">Gestures</span></h2>
+      <dl class="keys touch-only">
+        <dt>Tap</dt><dd>Select a player or arrow</dd>
+        <dt>Drag</dt><dd>Move a player or arrow</dd>
+        <dt>Double-tap</dt><dd>Rename player</dd>
+        <dt>Swipe empty court</dt><dd>Scroll the page</dd>
+        <dt>Hold, then drag</dt><dd>Box-select players</dd>
+        <dt>↻ Rotate</dt><dd>Rotate home one zone (above the court)</dd>
+      </dl>
+      <dl class="keys mouse-only">
         <dt>Drag</dt><dd>Move a player or arrow</dd>
         <dt>Shift-click</dt><dd>Add to selection</dd>
         <dt>Drag empty court</dt><dd>Box-select players</dd>
@@ -658,12 +743,15 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
   // ---------- Players ----------
   const pEls = new Map();
+  // Touch screens get a larger invisible grab area around each disc, so a fingertip can pick it up.
+  const TOUCH = matchMedia('(any-pointer: coarse)');
   function makePlayerEl(id) {
     const g = el('g', { 'data-pid': id });
     el('circle', { class: 'ring', r: 0.64 }, g);
     el('circle', { class: 'disc', r: R }, g);
     el('text', { class: 'role', y: 0.02 }, g);
     el('text', { class: 'name', y: 0.98 }, g);
+    if (TOUCH.matches) el('circle', { class: 'hit', r: 0.72 }, g);
     return g;
   }
   const roleVar = r => `var(--r-${r || 'none'})`;
@@ -761,8 +849,11 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
           <div class="row"><button type="button" class="btn danger" id="delSel">Delete ${ids.length} players</button></div>
         </div>`;
     } else {
-      box.innerHTML = `<p class="hint">Click a player or arrow to edit it. Shift-click or drag a box on the court to select several players.</p>`;
+      box.innerHTML = matchMedia('(hover: none)').matches
+        ? `<p class="hint">Tap a player or arrow to edit it. Hold, then drag on empty court to select several players.</p>`
+        : `<p class="hint">Click a player or arrow to edit it. Shift-click or drag a box on the court to select several players.</p>`;
     }
+    $('#selSec').classList.toggle('empty-sel', !ids.length && !ui.selArrow);
     const del = $('#delSel');
     if (del) del.onclick = deleteSelection;
   }
@@ -777,6 +868,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       </div>`;
     }).join('');
     $('#rotations').querySelectorAll('[data-rot]').forEach(b => b.onclick = () => rotate(b.dataset.rot, +b.dataset.dir));
+    $('#quickRot').textContent = `${state.rot.home}/6`;
   }
 
   function renderRoster() {
@@ -1168,7 +1260,9 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       ui.selArrow = null;
       raiseSelected(); renderPlayers(); renderArrows(); renderEditor(); renderRoster();
       const orig = new Map([...ui.sel].map(i => { const q = byId(i); return [i, { x: q.x, y: q.y }]; }));
-      drag = { kind: 'move', start: p, orig, moved: false };
+      const dbl = e.pointerType !== 'mouse' && lastTap.id === id && e.timeStamp - lastTap.t < 350;
+      lastTap = { id, t: e.timeStamp };
+      drag = { kind: 'move', start: p, orig, moved: false, dbl };
       return;
     }
     if (aEl) {
@@ -1178,11 +1272,31 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       drag = { kind: 'moveArrow', start: p, orig: { ...a }, a, moved: false };
       return;
     }
+    if (e.pointerType === 'touch') {
+      // A finger on empty court scrolls the page; holding still first starts a box select instead.
+      const d = { kind: 'pan', start: p, y0: e.clientY, x0: e.clientX, s0: window.scrollY, panned: false };
+      d.timer = setTimeout(() => {
+        if (drag !== d) return;
+        drag = { kind: 'marquee', start: p, cur: p, base: new Set(), moved: false };
+        if (navigator.vibrate) navigator.vibrate(12);
+        el('rect', { class: 'marquee', x: p.x, y: p.y, width: 0, height: 0 }, layers.overlay);
+      }, 380);
+      drag = d;
+      return;
+    }
     drag = { kind: 'marquee', start: p, cur: p, base: new Set(e.shiftKey ? ui.sel : []), moved: false };
   });
+  let lastTap = { id: null, t: 0 };
 
   svg.addEventListener('pointermove', e => {
     if (!drag) return;
+    if (drag.kind === 'pan') {
+      const dy = e.clientY - drag.y0;
+      if (!drag.panned && Math.hypot(e.clientX - drag.x0, dy) < 8) return;
+      drag.panned = true; clearTimeout(drag.timer);
+      window.scrollTo(0, drag.s0 - dy);
+      return;
+    }
     const p = pt(e);
     const dx = p.x - (drag.start ? drag.start.x : 0), dy = p.y - (drag.start ? drag.start.y : 0);
     if (drag.kind === 'move') {
@@ -1227,6 +1341,12 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     const d = drag; drag = null;
     svg.classList.remove('dragging');
     layers.overlay.innerHTML = '';
+    if (d.kind === 'pan') {
+      clearTimeout(d.timer);
+      if (!d.panned && (ui.sel.size || ui.selArrow)) { ui.sel.clear(); ui.selArrow = null; renderPlayers(); renderArrows(); renderEditor(); renderRoster(); }
+    } else if (d.kind === 'move' && d.dbl && !d.moved) {
+      const n = $('#edName'); if (n) { n.focus(); n.select(); }
+    }
     if (d.kind === 'draw') {
       if (Math.hypot(d.cur.x - d.start.x, d.cur.y - d.start.y) >= 0.4) {
         commit();
@@ -1284,6 +1404,18 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   // ---------- Panel wiring ----------
   $('#addRole').innerHTML = roleOptions('OH');
   document.querySelectorAll('#tools button').forEach(b => b.onclick = () => setTool(b.dataset.tool));
+  $('#quickRotate').onclick = () => rotate('home', 1);
+
+  // Phones: the app name moves above the tools, and the Selected editor sits right under the court
+  // so you can edit a player without scrolling away. Placeholders mark where they go back on wider screens.
+  const PHONE = matchMedia('(max-width: 820px)');
+  const movable = [[$('.brand'), $('#slotBrand')], [$('#selSec'), $('#slotDock')]]
+    .map(([node, slot]) => { const home = document.createComment(''); node.before(home); return { node, slot, home }; });
+  function placeForScreen() {
+    for (const m of movable) (PHONE.matches ? m.slot.append(m.node) : m.home.after(m.node));
+  }
+  PHONE.addEventListener('change', placeForScreen);
+  placeForScreen();
 
   // Theme: Auto follows the device; Light and Dark override it and are remembered in this browser.
   function setTheme(choice) {
