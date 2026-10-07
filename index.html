@@ -77,7 +77,7 @@
 
 /* ---------- Look C: Clipboard. Paper and ink, line-drawn court, marker circles; dark is a chalkboard ---------- */
 :root[data-look="clipboard"] {
-  --bg: #ebe5d8; --panel: #f9f6ef; --fg: #1f2430; --muted: #6b6658; --line: #ddd4c2; --soft: #f1ece1;
+  --bg: #ebe5d8; --panel: #f9f6ef; --fg: #1f2430; --muted: #5d584b; --line: #ddd4c2; --soft: #f1ece1;
   --seg-track: #e8e1d2; --seg-on: #fffdf8; --accent: #c2410c; --accent-ink: #fffdf8; --focus: #1f4fbf;
   --court: #fbf8f1; --free: #efe8da; --court-line: #2a2f3a; --line-w: .05px; --net: #1f2430; --post: #1f2430;
   --bench: transparent; --bench-line: rgba(31, 36, 48, .35); --court-label: rgba(31, 36, 48, .55);
@@ -158,6 +158,8 @@ button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 .fold[open] > summary::after { transform: rotate(225deg) translateY(-2px); }
 .fold > summary h2 { flex: 1; justify-content: flex-start; gap: 8px; }
 .rot-extra { justify-content: space-between; }
+#panelTabs { position: sticky; top: 0; z-index: 5; box-shadow: 0 0 0 8px var(--panel); }
+.tabbody h2 { scroll-margin-top: 72px; }
 .board-actions { justify-content: flex-end; gap: 4px; border-top: 1px solid var(--line); padding-top: 12px; }
 .small-dlg { width: min(420px, calc(100vw - 32px)); padding: 20px; border: 1px solid var(--line); border-radius: var(--r-2); background: var(--panel); color: var(--fg); box-shadow: var(--shadow-pop); }
 .small-dlg[open] { display: flex; flex-direction: column; gap: 12px; }
@@ -246,7 +248,14 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
 /* Share */
 #shareUrl { font-size: var(--fs-2); color: var(--muted); }
-.import { display: flex; flex-direction: column; gap: 8px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--fg); }
+.welcome {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px 8px 12px; border-radius: var(--r-2);
+  background: var(--soft); border: 1px solid var(--line); font-size: var(--fs-2);
+}
+.welcome p { margin: 0; }
+.welcome .row { flex-wrap: nowrap; gap: 4px; }
+.dlg-title { margin: 0; font-size: var(--fs-4); font-weight: 700; }
+.dlg-actions { justify-content: flex-end; }
 
 /* Lineup generator */
 .tabbody { display: flex; flex-direction: column; gap: 24px; }
@@ -418,6 +427,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   .check input { width: 20px; height: 20px; }
   .check { min-height: 32px; }
   .roster li button { padding: 8px; }
+  .fold > summary { min-height: 44px; }
 }
 @media (hover: none) and (pointer: coarse) {
   .mouse-only { display: none; }
@@ -454,10 +464,12 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   .dock > .sec { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-2); padding: 12px; }
   .dock > .sec > h2 { display: none; }
   .dock .empty-sel { display: none; }
-  .panel { border-left: 0; border-top: 1px solid var(--line); padding: 24px max(16px, env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+  .panel { overflow: visible; border-left: 0; border-top: 1px solid var(--line); padding: 24px max(16px, env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
 }
-/* Small phones: icon-only tools so the bar stays on one line */
+/* Small phones: icon-only tools so the bar stays on one line, and slightly larger names on the court */
 @media (max-width: 480px) {
+  [data-look="broadcast"] .player .name { font-size: .4px; }
+  [data-look="pro"] .player .name { font-size: .42px; }
   .toolbar .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .toolbar .seg button { padding: 6px 12px; }
   .toolbar .btn.small { padding: 4px 10px; }
@@ -472,7 +484,11 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   .app { grid-template-columns: minmax(0, 1fr) 330px; }
   .stage { gap: 8px; padding: 8px 12px 8px max(12px, env(safe-area-inset-left)); }
   .seg button { padding: 4px 8px; }
-  #scenCaption { display: none; }
+  #scenCaption, .welcome { display: none; }
+  .scen-bar .seg { flex-wrap: nowrap; }
+  .scen-bar .seg button { padding: 4px 6px; }
+  .scen-bar .long { display: none; }
+  .scen-bar .short { display: inline; }
   .panel { padding: 16px max(16px, env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) 16px; gap: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -532,6 +548,13 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       <span id="scenCaption"></span>
       <p class="overlap-note" id="overlapNote" role="status" hidden></p>
     </div>
+    <div class="welcome" id="welcome" role="note" hidden>
+      <p><b>Example team.</b> Try Rotate and the scenarios, then set up your own squad.</p>
+      <div class="row">
+        <button type="button" class="btn small" id="welcomeSquad">Set up my squad</button>
+        <button type="button" class="btn small ghost" id="welcomeClose" aria-label="Dismiss"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+      </div>
+    </div>
     <div class="court-wrap">
       <svg id="board" viewBox="-2.5 -2 14 22" aria-label="Volleyball court">
         <defs>
@@ -564,23 +587,13 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
         Share</button>
     </header>
 
-    <div class="note import" id="importBanner" hidden>
-      <span id="importText"></span>
-      <div class="row">
-        <button type="button" class="btn small primary" id="importYes">Load it</button>
-        <button type="button" class="btn small" id="importNo">Not now</button>
-      </div>
-    </div>
-
-    <div class="seg team-seg" id="panelTabs" role="tablist" aria-label="Panel">
+    <div class="seg team-seg" id="panelTabs" role="group" aria-label="Panel">
       <button type="button" data-tab="board" aria-pressed="true">Board</button>
       <button type="button" data-tab="lineups" aria-pressed="false">Lineups</button>
       <button type="button" data-tab="settings" aria-pressed="false">Settings</button>
     </div>
 
     <div id="tabBoard" class="tabbody">
-
-    <p class="note" id="exampleNote" hidden>This is an example lineup. Rename the players, or use Clear board at the bottom to start from scratch.</p>
 
     <section class="sec" aria-labelledby="rotH">
       <h2 id="rotH">Rotation</h2>
@@ -653,7 +666,10 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       <section class="sec" aria-labelledby="squadH">
         <h2 id="squadH">Squad <small>tap every role each person can play</small></h2>
         <div class="sq-list" id="squad"></div>
-        <button type="button" class="btn" id="addSquad">Add person</button>
+        <div class="row">
+          <button type="button" class="btn grow" id="addSquad">Add person</button>
+          <button type="button" class="btn ghost danger" id="clearSquad">Clear squad</button>
+        </div>
       </section>
 
       <section class="sec" aria-labelledby="orderH">
@@ -741,6 +757,14 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     </div>
   </aside>
 </div>
+<dialog id="importDlg" class="small-dlg" aria-labelledby="importH" aria-describedby="importText">
+  <h2 id="importH" class="dlg-title">Load this shared link?</h2>
+  <p class="hint" id="importText"></p>
+  <div class="row dlg-actions">
+    <button type="button" class="btn" id="importNo">Keep mine</button>
+    <button type="button" class="btn primary" id="importYes">Load it</button>
+  </div>
+</dialog>
 <dialog id="shareDlg" class="small-dlg" aria-labelledby="shareH">
   <div class="sheet-head">
     <h2 id="shareH">Share</h2>
@@ -851,7 +875,8 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       players.push({ id: newId('p'), team: 'home', name: home[i], role, x: h.x, y: h.y });
       players.push({ id: newId('p'), team: 'opp', name: opp[i], role, x: o.x, y: o.y });
     });
-    players.push({ id: newId('p'), team: 'home', name: 'Mika', role: 'L', x: 10.4, y: 17.4 });
+    const lib = liberoSpot(zonePos('home', 6));
+    players.push({ id: newId('p'), team: 'home', name: 'Mika', role: 'L', x: lib.x, y: lib.y });
     // Setter in zone 1 releasing to the target, plus a pass.
     const s = zonePos('home', 1);
     return {
@@ -1117,7 +1142,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       return `<div class="rot-row">
         <div class="rot-name">${TEAM_NAME[team]}<small>Rotation ${state.rot[team]} of 6 · ${n} on court</small></div>
         <button type="button" class="btn small" data-rot="${team}" data-dir="-1" title="Rotate back one zone" aria-label="Rotate ${TEAM_NAME[team]} back"><svg class="ic" aria-hidden="true"><use href="#i-ccw"/></svg></button>
-        <button type="button" class="btn small${team === 'home' ? ' primary' : ''}" data-rot="${team}" data-dir="1" title="Rotate forward one zone (clockwise)"><svg class="ic" aria-hidden="true"><use href="#i-cw"/></svg>Rotate</button>
+        <button type="button" class="btn small${team === 'home' ? ' primary' : ''}" data-rot="${team}" data-dir="1" title="Rotate forward one zone (clockwise)" aria-label="Rotate ${TEAM_NAME[team]} forward"><svg class="ic" aria-hidden="true"><use href="#i-cw"/></svg>Rotate</button>
       </div>`;
     }).join('');
     $('#rotations').querySelectorAll('[data-rot]').forEach(b => b.onclick = () => rotate(b.dataset.rot, +b.dataset.dir));
@@ -1150,7 +1175,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     renderZones(); renderArrows(); renderPlayers(); renderEditor(); renderRoster();
     renderSquad(); renderFilters(); renderGen(); renderScenario(); renderSettings();
     $('#showZones').checked = !!state.showZones;
-    $('#exampleNote').hidden = !state.example;
+    $('#welcome').hidden = !state.example;
     updateUndo();
   }
 
@@ -1713,12 +1738,15 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       if (!d.panned && (ui.sel.size || ui.selArrow)) { ui.sel.clear(); ui.selArrow = null; renderPlayers(); renderArrows(); renderEditor(); renderRoster(); }
     } else if (d.kind === 'move' && d.dbl && !d.moved) {
       const n = $('#edName'); if (n) { n.focus(); n.select(); }
-    }
+    } else if ((d.kind === 'move' || d.kind === 'moveArrow') && !d.moved) hintEditorBelow();
     if (d.kind === 'draw') {
       if (Math.hypot(d.cur.x - d.start.x, d.cur.y - d.start.y) >= 0.4) {
         commit();
-        state.arrows.push({ id: newId('a'), type: ui.tool, x1: d.start.x, y1: d.start.y, x2: d.cur.x, y2: d.cur.y });
-        renderArrows(); save();
+        const a = { id: newId('a'), type: ui.tool, x1: d.start.x, y1: d.start.y, x2: d.cur.x, y2: d.cur.y };
+        state.arrows.push(a);
+        ui.sel.clear(); ui.selArrow = a.id;
+        setTool('select');
+        renderPlayers(); renderArrows(); renderEditor(); renderRoster(); save();
       }
     } else if (d.kind === 'marquee') {
       if (!d.moved && !d.base.size) { ui.sel.clear(); ui.selArrow = null; }
@@ -1760,7 +1788,8 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
   // ---------- Keyboard ----------
   document.addEventListener('keydown', e => {
-    const typing = e.target.matches('input, select, textarea');
+    if (document.querySelector('dialog[open]')) return; // shortcuts never act on the board behind a dialog
+    const typing = !!e.target.matches?.('input, select, textarea');
     const mod = e.metaKey || e.ctrlKey;
     if (mod && e.key.toLowerCase() === 'z' && !typing) { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
     if (mod && e.key.toLowerCase() === 'y' && !typing) { e.preventDefault(); redo(); return; }
@@ -1769,8 +1798,8 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     if (k === 'Delete' || k === 'Backspace') { e.preventDefault(); deleteSelection(); }
     else if (k === 'Escape') { ui.sel.clear(); ui.selArrow = null; setTool('select'); renderAll(); }
     else if (k === 'v' || k === 'V') setTool('select');
-    else if (k === 'a' || k === 'A') setTool('run');
-    else if (k === 'b' || k === 'B') setTool('ball');
+    else if (k === 'a' || k === 'A') pickTool('run');
+    else if (k === 'b' || k === 'B') pickTool('ball');
     else if (k === 'r' || k === 'R') rotate('home', e.shiftKey ? -1 : 1);
     else if (k.startsWith('Arrow') && (ui.sel.size || ui.selArrow)) {
       e.preventDefault();
@@ -1786,7 +1815,13 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
   // ---------- Panel wiring ----------
   $('#addRole').innerHTML = roleOptions('OH');
-  document.querySelectorAll('#tools button').forEach(b => b.onclick = () => setTool(b.dataset.tool));
+  // Drawing tools: say what to do, since on phones the buttons are icons only. Each draws one arrow, then Move comes back.
+  function pickTool(t) {
+    if (t === ui.tool) return setTool('select');
+    setTool(t);
+    if (t !== 'select') toast(`Drag on the court to draw a ${t === 'run' ? 'run arrow' : 'ball path'}.`);
+  }
+  document.querySelectorAll('#tools button').forEach(b => b.onclick = () => pickTool(b.dataset.tool));
   $('#quickRotate').onclick = () => rotate('home', 1);
   $('#openSheet').onclick = openSheet;
   $('#sheetClose').onclick = () => $('#sheet').close();
@@ -1846,7 +1881,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   $('#clearAll').onclick = e => {
     const b = e.currentTarget;
     if (!b.classList.contains('armed')) {
-      b.classList.add('armed'); b.textContent = 'Click again to clear';
+      b.classList.add('armed'); b.textContent = 'Press again to clear';
       clearTimeout(armT); armT = setTimeout(() => { b.classList.remove('armed'); b.textContent = 'Clear board'; }, 3000);
       return;
     }
@@ -1921,7 +1956,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
         <input type="text" class="sq-name" id="sq-${m.id}" value="${esc(m.name)}" maxlength="18" aria-label="Name">
         <div class="sq-roles">${SQUAD_ROLES.map(r => `<button type="button" class="rt" data-r="${r}" aria-pressed="${m.roles.includes(r)}" style="--rc: var(--r-${r})" title="${ROLE_NAME[r]}">${r}</button>`).join('')}</div>
         <button type="button" class="x" aria-label="Remove ${esc(m.name)}"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
-      </div>`).join('') : `<p class="empty">No one in the squad yet.</p>`;
+      </div>`).join('') : `<p class="empty">No one in the squad yet. Add each person, then tap every role they can play.</p>`;
   }
 
   function renderFilters() {
@@ -1989,7 +2024,23 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     state.rot.home = 1; state.example = false; state.scen = null;
     ui.placedKey = lineupKey(g); ui.sel.clear(); ui.selArrow = null;
     renderAll(); save();
+    showCourt();
     toast('Lineup placed in rotation 1. Press Rotate to step through all six.');
+  }
+
+  // On phones the editor for the tapped player sits under the court, often off screen. Say so once per visit.
+  function hintEditorBelow() {
+    if (ui.editorHinted || !matchMedia('(max-width: 820px)').matches) return;
+    if ($('#slotDock').getBoundingClientRect().top < innerHeight - 40) return;
+    ui.editorHinted = true;
+    toast(ui.selArrow ? 'Arrow selected. Change or delete it just below the court.' : 'Selected. Rename, change the role or delete just below the court (or double-tap to rename).');
+  }
+
+  // On phones the panel sits below the court; after an action that changes the court, scroll back up to it.
+  function showCourt() {
+    if (!matchMedia('(max-width: 820px)').matches) return;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelector('.stage').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
   }
 
   function setTab(t) {
@@ -2030,6 +2081,22 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       renderSquad(); renderFilters(); renderGen(); save();
     }
   });
+  $('#welcomeClose').onclick = () => { state.example = false; $('#welcome').hidden = true; save(); };
+  $('#welcomeSquad').onclick = () => {
+    state.example = false; $('#welcome').hidden = true; save();
+    setTab('lineups');
+    const sq = $('#squadH');
+    sq.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    toast('Rename people, tap the roles each can play, or use Clear squad to start fresh.');
+  };
+  $('#clearSquad').onclick = () => {
+    if (!state.squad.length) return toast('The squad is already empty.');
+    commit();
+    state.squad = []; ui.gen.filters = []; ui.placedKey = null;
+    renderSquad(); renderFilters(); renderGen(); save();
+    toast('Squad cleared. Undo brings it back.');
+    $('#addSquad').focus();
+  };
   $('#addSquad').onclick = () => {
     commit();
     const m = { id: newId('m'), name: `Player ${state.squad.length + 1}`, roles: [] };
@@ -2250,10 +2317,11 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     try { d = parsePayload(JSON.parse(fromB64(m[1]))); } catch (e) {}
     if (!d) return toast('This share link looks incomplete. Ask for a fresh one.');
     if (!hadSaved) { applyShared(d); past.length = 0; updateUndo(); return; }
-    $('#importText').textContent = `This link has ${describe(d)}. Load it? It replaces your squad${d.players ? ' and court' : ''}. Undo brings yours back.`;
-    $('#importBanner').hidden = false;
-    $('#importYes').onclick = () => { $('#importBanner').hidden = true; applyShared(d); };
-    $('#importNo').onclick = () => { $('#importBanner').hidden = true; };
+    $('#importText').textContent = `It has ${describe(d)}. Loading it replaces your squad${d.players ? ' and court' : ''}; Undo brings yours back.`;
+    const dlg = $('#importDlg');
+    $('#importYes').onclick = () => { dlg.close(); applyShared(d); };
+    $('#importNo').onclick = () => dlg.close();
+    dlg.showModal();
   }
 
   // ---------- Boot ----------
