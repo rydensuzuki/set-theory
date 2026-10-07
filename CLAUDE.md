@@ -16,6 +16,8 @@ python3 -m http.server 8777   # then open http://localhost:8777
 
 ## Invariants — do not break these
 
+- Don't scroll the page from JavaScript during a touch on the court. `#board` keeps `touch-action: pan-y` so the browser scrolls natively, and the `touchstart`/`touchmove` listeners block scrolling only for touches the court handles (players, arrows, handles, drawing, a hold-to-box-select). A hand-rolled `scrollTo` from the finger's position made the page jump on phones, because the address bar resizes mid-scroll and shifts the finger's screen position.
+
 <!--
   Starts empty ON PURPOSE. Each entry should be a rule that cost a real bug once, stated
   with the bug that earned it. Add one the moment a bug is fixed — that is the only time

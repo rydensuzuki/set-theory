@@ -133,7 +133,7 @@ button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 .seg button[aria-pressed="true"] { background: var(--seg-on); color: var(--fg); box-shadow: var(--seg-shadow); }
 .seg button svg { width: 16px; height: 16px; flex: none; }
 .court-wrap { flex: 1; min-height: 0; display: flex; justify-content: center; }
-#board { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; -webkit-user-select: none; border-radius: var(--r-2); }
+#board { width: 100%; height: 100%; display: block; touch-action: pan-y; user-select: none; -webkit-user-select: none; border-radius: var(--r-2); }
 #board.tool-run, #board.tool-ball { cursor: crosshair; }
 
 /* Panel */
@@ -1642,8 +1642,9 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       return;
     }
     if (e.pointerType === 'touch') {
-      // A finger on empty court scrolls the page; holding still first starts a box select instead.
-      const d = { kind: 'pan', start: p, y0: e.clientY, x0: e.clientX, s0: window.scrollY, panned: false };
+      // A finger on empty court scrolls the page natively (see the touch listeners below);
+      // holding still first starts a box select instead.
+      const d = { kind: 'pan', start: p, x0: e.clientX, y0: e.clientY, panned: false };
       d.timer = setTimeout(() => {
         if (drag !== d) return;
         drag = { kind: 'marquee', start: p, cur: p, base: new Set(), moved: false };
@@ -1660,10 +1661,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   svg.addEventListener('pointermove', e => {
     if (!drag) return;
     if (drag.kind === 'pan') {
-      const dy = e.clientY - drag.y0;
-      if (!drag.panned && Math.hypot(e.clientX - drag.x0, dy) < 8) return;
-      drag.panned = true; clearTimeout(drag.timer);
-      window.scrollTo(0, drag.s0 - dy);
+      if (Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) >= 8) { drag.panned = true; clearTimeout(drag.timer); }
       return;
     }
     const p = pt(e);
@@ -1737,8 +1735,24 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     }
   }
   svg.addEventListener('pointerup', endDrag);
-  svg.addEventListener('pointercancel', endDrag);
+  // The browser cancels the pointer when it takes over a touch to scroll the page: that's a scroll, not a tap.
+  svg.addEventListener('pointercancel', () => {
+    if (drag && drag.kind === 'pan') { clearTimeout(drag.timer); drag = null; return; }
+    endDrag();
+  });
   svg.addEventListener('lostpointercapture', endDrag);
+
+  // Touch scrolling: the court allows native vertical scrolling (touch-action: pan-y), so a swipe on empty
+  // court scrolls the page smoothly. A touch that starts on a player, arrow or handle, or any touch while
+  // drawing an arrow, is ours: stop the browser from scrolling. Once a hold turns into a box select,
+  // finger moves stop scrolling too.
+  svg.addEventListener('touchstart', e => {
+    if (e.touches.length > 1) return;
+    if (ui.tool !== 'select' || e.target.closest('[data-pid], [data-aid], [data-handle]')) e.preventDefault();
+  }, { passive: false });
+  svg.addEventListener('touchmove', e => {
+    if (drag && drag.kind !== 'pan' && e.cancelable) e.preventDefault();
+  }, { passive: false });
   svg.addEventListener('dblclick', e => {
     const pEl = e.target.closest('[data-pid]');
     if (pEl && ui.tool === 'select') { const n = $('#edName'); if (n) { n.focus(); n.select(); } }
