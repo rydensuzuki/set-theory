@@ -166,8 +166,14 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 .scen-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
 .scen-bar .seg { flex-wrap: wrap; }
 .scen-bar .seg button { font-size: 14px; padding: 5px 10px; }
+.scen-bar .short { display: none; }
 .scen-label { font-family: var(--font-display); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
 #scenCaption { font-size: 13px; color: var(--muted); }
+.overlap-note {
+  flex-basis: 100%; margin: 0; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 600;
+  color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
+}
+.overlap-note::before { content: "⚠ "; }
 
 /* Settings */
 .set-group .seg button { white-space: normal; line-height: 1.2; padding: 7px 8px; }
@@ -225,6 +231,15 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   stroke: rgba(10, 14, 20, .78); stroke-width: .13px; stroke-linejoin: round; paint-order: stroke; pointer-events: none;
 }
 .player .hit { fill: transparent; }
+.player .serve-mark { display: none; pointer-events: none; }
+.player.serving .serve-mark { display: inline; }
+.serve-glow { fill: none; stroke: var(--ball); stroke-width: .1px; }
+.serve-ball { fill: var(--ball); stroke: var(--net); stroke-width: .045px; }
+.serve-seam { fill: none; stroke: var(--net); stroke-width: .035px; }
+.serve-tag { font-family: var(--font-display); font-weight: 700; font-size: .3px; letter-spacing: .03px; text-anchor: middle; fill: var(--net); }
+.serve-tag-bg { fill: var(--ball); }
+.player.waiting { opacity: .5; }
+.player.waiting .disc { stroke: #fff; stroke-width: .06px; stroke-dasharray: .14 .1; }
 .player .ring { fill: rgba(255,255,255,.22); stroke: #fff; stroke-width: .07px; stroke-dasharray: .22 .13; opacity: 0; }
 .player.selected .ring { opacity: 1; }
 .arrow .hit { stroke: transparent; stroke-width: .55px; cursor: pointer; }
@@ -234,7 +249,49 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 .arrow.selected .shaft { stroke-width: .14px; filter: drop-shadow(0 0 .12px rgba(0,0,0,.9)); }
 #board.tool-run .arrow .hit, #board.tool-ball .arrow .hit { pointer-events: none; }
 .handle { fill: #fff; stroke: var(--net); stroke-width: .06px; cursor: move; }
+.overlap-line { stroke: #b3001b; stroke-width: .12px; stroke-linecap: round; }
+.overlap-line.top { stroke: #fff; stroke-width: .05px; stroke-dasharray: .18 .14; }
+.overlap-ring { fill: rgba(214, 16, 40, .78); stroke: #fff; stroke-width: .07px; }
 .marquee { fill: rgba(255,255,255,.12); stroke: #fff; stroke-width: .04px; stroke-dasharray: .15 .1; pointer-events: none; }
+
+/* All 6 rotations sheet */
+#sheet {
+  width: min(1080px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 20px; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--panel); color: var(--fg); box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
+}
+#sheet::backdrop { background: rgba(8, 12, 18, .55); }
+#sheet[open] { display: flex; flex-direction: column; gap: 14px; }
+.sheet-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.sheet-head h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 24px; text-transform: uppercase; letter-spacing: .02em; }
+.sheet-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.sheet-grid li button {
+  width: 100%; display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: var(--radius); cursor: pointer;
+  border: 1px solid var(--line); background: var(--soft); text-align: left;
+}
+.sheet-grid li button.on { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+@media (hover: hover) { .sheet-grid li button:hover { border-color: var(--muted); } }
+.sheet-grid .cap { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.sheet-grid .cap b { font-family: var(--font-display); font-weight: 700; font-size: 17px; white-space: nowrap; }
+.sheet-grid .cap span { font-size: 12px; color: var(--muted); }
+.sheet-grid svg { width: 100%; height: auto; display: block; border-radius: 5px; }
+.sheet-grid .player { cursor: inherit; }
+@media (max-width: 820px) {
+  #sheet {
+    width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; border: 0; border-radius: 0;
+    padding: max(14px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
+  .sheet-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .sheet-grid li button { padding: 6px; }
+  .sheet-grid .cap { flex-direction: column; align-items: flex-start; gap: 0; line-height: 1.25; }
+}
+@media print {
+  .app, #toast, .sheet-actions { display: none !important; }
+  html, body { height: auto; background: #fff; }
+  #sheet { position: static; width: auto; max-width: none; height: auto; max-height: none; border: 0; box-shadow: none; padding: 0; color: #000; background: #fff; }
+  .sheet-grid { grid-template-columns: repeat(3, 1fr); }
+  .sheet-grid li { break-inside: avoid; }
+  .sheet-grid li button { border-color: #bbb; background: #fff; box-shadow: none; }
+}
 
 #toast {
   position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 12px);
@@ -284,8 +341,11 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   .seg kbd { display: none; }
   .scen-bar { gap: 6px; }
   .scen-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  .scen-bar .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
-  .scen-bar .seg button { justify-content: center; padding: 6px 4px; }
+  .scen-bar .seg { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); width: 100%; }
+  .scen-bar .seg button { justify-content: center; padding: 6px 4px; grid-column: span 3; }
+  .scen-bar .seg button[data-scen^="vs"] { grid-column: span 4; }
+  .scen-bar .long { display: none; }
+  .scen-bar .short { display: inline; }
   #scenCaption { font-size: 12.5px; line-height: 1.35; }
   .court-wrap { flex: none; }
   #board { height: auto; max-height: max(400px, calc(100svh - 196px)); }
@@ -352,13 +412,15 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       <span class="scen-label" id="scenLabel">Home</span>
       <div class="seg" id="scenarios" role="group" aria-labelledby="scenLabel">
         <button type="button" data-scen="base" aria-pressed="true" title="Rotation spots">Base</button>
-        <button type="button" data-scen="receive" aria-pressed="false" title="5-1 serve receive: outsides and libero pass, setter and opposite hide">Serve receive</button>
+        <button type="button" data-scen="serve" aria-pressed="false" title="Our serve: the zone 1 player serves, front row ready to block">Serve</button>
+        <button type="button" data-scen="receive" aria-pressed="false" title="5-1 serve receive: outsides and libero pass, setter and opposite hide"><span class="long">Serve receive</span><span class="short">Receive</span></button>
         <button type="button" data-scen="attack" aria-pressed="false" title="Setter at the target, hitters at their approach spots, libero covering">Attack</button>
         <button type="button" data-scen="vsOH" aria-pressed="false" title="Defend their outside hitter (the attack comes at your right side)">Defend: OH</button>
         <button type="button" data-scen="vsMB" aria-pressed="false" title="Defend their middle">Defend: MB</button>
         <button type="button" data-scen="vsOPP" aria-pressed="false" title="Defend their right side (the attack comes at your left side)">Defend: RS</button>
       </div>
       <span id="scenCaption"></span>
+      <p class="overlap-note" id="overlapNote" role="status" hidden></p>
     </div>
     <div class="court-wrap">
       <svg id="board" viewBox="-2.5 -2 14 22" aria-label="Volleyball court">
@@ -373,6 +435,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
         <g id="courtLayer"></g>
         <g id="zoneLayer"></g>
         <g id="arrowLayer"></g>
+        <g id="warnLayer"></g>
         <g id="playerLayer"></g>
         <g id="overlayLayer"></g>
       </svg>
@@ -451,6 +514,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     <section class="sec" aria-labelledby="rotH">
       <h2 id="rotH">Rotation <small>clockwise, one zone</small></h2>
       <div id="rotations"></div>
+      <button type="button" class="btn" id="openSheet">See all 6 rotations</button>
       <label class="check" for="showZones"><input type="checkbox" id="showZones"> Show zone numbers</label>
     </section>
 
@@ -565,6 +629,24 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     </div>
   </aside>
 </div>
+<dialog id="sheet" aria-labelledby="sheetH">
+  <div class="sheet-head">
+    <div>
+      <h2 id="sheetH">All 6 rotations</h2>
+      <p class="hint" id="sheetHint"></p>
+    </div>
+    <div class="row sheet-actions">
+      <button type="button" class="btn" id="sheetPrint">Print</button>
+      <button type="button" class="btn primary" id="sheetClose">Close</button>
+    </div>
+  </div>
+  <div class="seg team-seg sheet-actions" id="sheetKind" role="group" aria-label="Show">
+    <button type="button" data-kind="base" aria-pressed="true">Base</button>
+    <button type="button" data-kind="serve" aria-pressed="false">Serve</button>
+    <button type="button" data-kind="receive" aria-pressed="false">Serve receive</button>
+  </div>
+  <ol class="sheet-grid" id="sheetGrid"></ol>
+</dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -593,7 +675,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
   const $ = s => document.querySelector(s);
   const svg = $('#board');
-  const layers = { court: $('#courtLayer'), zone: $('#zoneLayer'), arrow: $('#arrowLayer'), player: $('#playerLayer'), overlay: $('#overlayLayer') };
+  const layers = { court: $('#courtLayer'), zone: $('#zoneLayer'), arrow: $('#arrowLayer'), player: $('#playerLayer'), overlay: $('#overlayLayer'), warn: $('#warnLayer') };
 
   let uid = 0;
   const newId = p => p + Date.now().toString(36) + (uid++).toString(36);
@@ -672,6 +754,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
 
   function commit() {
+    if (ui.oneStep) return; // inside a multi-part change that already saved its undo step
     past.push(JSON.stringify(state));
     if (past.length > 200) past.shift();
     future.length = 0;
@@ -752,17 +835,38 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     el('text', { class: 'role', y: 0.02 }, g);
     el('text', { class: 'name', y: 0.98 }, g);
     if (TOUCH.matches) el('circle', { class: 'hit', r: 0.72 }, g);
+    serveMark(g);
     return g;
+  }
+  // Ball, highlight ring and SERVING tag, shown on the server in the Serve scenario.
+  function serveMark(parent) {
+    const m = el('g', { class: 'serve-mark' }, parent);
+    el('circle', { class: 'serve-glow', r: 0.58 }, m);
+    el('rect', { class: 'serve-tag-bg', x: -0.62, y: -1.12, width: 1.24, height: 0.4, rx: 0.2 }, m);
+    el('text', { class: 'serve-tag', y: -0.82 }, m).textContent = 'SERVING';
+    const ball = el('g', { transform: 'translate(0.56 -0.36)' }, m);
+    el('circle', { class: 'serve-ball', r: 0.21 }, ball);
+    el('path', { class: 'serve-seam', d: 'M-0.2 -0.04 Q0 0.06 0.2 -0.04 M-0.06 -0.2 Q0.05 0 -0.06 0.2' }, ball);
+    return m;
+  }
+  // In the Serve scenario: who serves (zone 1) and who waits off court for them.
+  function serveRoles() {
+    if (!state.scen || state.scen.name !== 'serve') return {};
+    const zs = zonesOf('home');
+    if (zs.error !== undefined) return {};
+    const off = onCourt('serve', zs.zone, zs.liberos).off;
+    return { server: zs.zone[1], off };
   }
   const roleVar = r => `var(--r-${r || 'none'})`;
   function badge(p) { return p.role || (p.name || '?').trim().slice(0, 2).toUpperCase(); }
 
   function renderPlayers() {
     const seen = new Set();
+    const { server, off } = serveRoles();
     for (const p of state.players) {
       let g = pEls.get(p.id);
       if (!g) { g = makePlayerEl(p.id); pEls.set(p.id, g); layers.player.appendChild(g); }
-      g.setAttribute('class', `player ${p.team}${ui.sel.has(p.id) ? ' selected' : ''}`);
+      g.setAttribute('class', `player ${p.team}${ui.sel.has(p.id) ? ' selected' : ''}${p === server ? ' serving' : ''}${p === off ? ' waiting' : ''}`);
       g.style.transform = `translate(${p.x}px, ${p.y}px)`;
       const disc = g.children[1];
       disc.style.fill = roleVar(p.role);
@@ -773,11 +877,46 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       seen.add(p.id);
     }
     for (const [id, g] of pEls) if (!seen.has(id)) { g.remove(); pEls.delete(id); }
+    renderOverlaps();
   }
   function placePlayers() {
     for (const p of state.players) { const g = pEls.get(p.id); if (g) g.style.transform = `translate(${p.x}px, ${p.y}px)`; }
+    renderOverlaps();
   }
   function raiseSelected() { for (const id of ui.sel) { const g = pEls.get(id); if (g) layers.player.appendChild(g); } }
+
+  // ---------- Overlap check ----------
+  // When the ball is served, each front-row player must be nearer the net than the player behind them,
+  // and each row must keep its left-to-right order. Checked while Serve or Serve receive is showing,
+  // so a dragged or saved formation that would be called for overlap is flagged on the court.
+  const OVERLAP_PAIRS = [[4, 5, 'y'], [3, 6, 'y'], [2, 1, 'y'], [4, 3, 'x'], [3, 2, 'x'], [5, 6, 'x'], [6, 1, 'x']];
+  function findOverlaps() {
+    const name = state.scen && state.scen.name;
+    if (name !== 'serve' && name !== 'receive') return [];
+    const zs = zonesOf('home');
+    if (zs.error !== undefined) return [];
+    const { six } = onCourt(name, zs.zone, zs.liberos);
+    return OVERLAP_PAIRS
+      .filter(([a, b, k]) => !(name === 'serve' && (a === 1 || b === 1)) && six[b][k] - six[a][k] < 0.01)
+      .map(([a, b, k]) => ({ a: six[a], b: six[b], za: a, zb: b, k }));
+  }
+  const who = (p, z) => `${p.name || ROLE_NAME[p.role] || 'Player'} (zone ${z})`;
+  function renderOverlaps() {
+    const list = findOverlaps();
+    layers.warn.innerHTML = '';
+    const bad = new Map();
+    for (const o of list) {
+      for (const cls of ['overlap-line', 'overlap-line top']) el('line', { class: cls, x1: o.a.x, y1: o.a.y, x2: o.b.x, y2: o.b.y }, layers.warn);
+      bad.set(o.a.id, o.a); bad.set(o.b.id, o.b);
+    }
+    for (const p of bad.values()) el('circle', { class: 'overlap-ring', cx: p.x, cy: p.y, r: 0.72 }, layers.warn);
+    const note = $('#overlapNote');
+    note.hidden = !list.length;
+    if (!list.length) return;
+    const o = list[0];
+    note.textContent = `Overlap: ${who(o.a, o.za)} must be ${o.k === 'y' ? 'nearer the net than' : 'left of'} ${who(o.b, o.zb)}`
+      + (list.length > 1 ? ` (and ${list.length - 1} more)` : '') + '.';
+  }
 
   // ---------- Arrows ----------
   function renderArrows() {
@@ -986,7 +1125,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     state.rot[team] = ((state.rot[team] - 1 + dir + 6) % 6) + 1;
     if (scen || hitterOut) placeScenario(state.scen.name);
     animateMoves();
-    renderRoster(); renderScenario(); save();
+    renderPlayers(); renderRoster(); renderScenario(); save();
   }
 
   // ---------- Scenarios (home team) ----------
@@ -1002,7 +1141,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     opponentMoves: [false, true], keepScenarioDrags: [false, true]
   };
   const DEFENSE_NAME = { perimeter: 'perimeter', rotational: 'rotational', middleUp: 'middle-up' };
-  const SCEN_LABEL = { base: 'Base', receive: 'Serve receive', attack: 'Attack', vsOH: 'Defending their outside', vsMB: 'Defending their middle', vsOPP: 'Defending their right side' };
+  const SCEN_LABEL = { base: 'Base', serve: 'Our serve', receive: 'Serve receive', attack: 'Attack', vsOH: 'Defending their outside', vsMB: 'Defending their middle', vsOPP: 'Defending their right side' };
   const COL = { 4: 0, 5: 0, 3: 1, 6: 1, 2: 2, 1: 2 };
   const isFront = z => z >= 2 && z <= 4;
   const OFF_SPOT = { x: 6.4, y: 18.95 }; // where the middle stands while the libero is in for them
@@ -1031,6 +1170,9 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   };
   // Where their hitter stands to attack (opponent side, just off the net), and which of their zones they come from.
   const OPP_HITTER = { vsOH: { role: 'OH', zone: 4, at: [8.6, 8.0] }, vsMB: { role: 'MB', zone: 3, at: [5.3, 8.0] }, vsOPP: { role: 'OPP', zone: 2, at: [0.4, 8.0] } };
+  // Our serve: the zone 1 player serves from behind the end line; the rest wait near their zones, front row ready to block.
+  const SERVE_SPOTS = { 4: [1.6, 10.2], 3: [4.5, 10.2], 2: [7.4, 10.2], 5: [1.6, 14.6], 6: [4.5, 15.2], 1: [7.6, 18.9] };
+  const SERVE_OFF_SPOT = { x: -1.1, y: 16.2 }; // on our serve, whoever is off court (libero or middle) waits on the left sideline, away from the server
   const ATTACK = { target: [6.0, 9.75], LF: [0.4, 12.4], MF: [4.2, 11.6], RF: [8.7, 12.4], cover: [2.0, 13.7], pipe: [4.5, 15.4], D: [7.6, 15.4] };
 
   // The six actually playing: the libero takes the back-row middle's zone, and that middle steps off.
@@ -1099,6 +1241,12 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     return pos;
   }
 
+  function serveSpots(six) {
+    const pos = {};
+    for (let z = 1; z <= 6; z++) pos[six[z].id] = { x: SERVE_SPOTS[z][0], y: SERVE_SPOTS[z][1] };
+    return pos;
+  }
+
   function defenseSpots(six, kind) {
     const s = slotsOf(six), table = DEFENSE_SYSTEMS[state.settings.defense][kind], pos = {};
     for (const slot of ['LF', 'MF', 'RF', 'LB', 'MBk', 'RB']) pos[s[slot].id] = { x: table[slot][0], y: table[slot][1] };
@@ -1116,20 +1264,32 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     return pos;
   }
 
+  // Who is on court for a scenario. When the back-row middle is the one serving, they serve and the libero waits off court.
+  function onCourt(name, zone, liberos) {
+    if (name === 'serve' && zone[1].role === 'MB') return { six: zone, off: liberos[0] || null };
+    return playingSix(zone, liberos);
+  }
+
+  // A scenario's spots for one rotation (zone → player), including saved spots. Doesn't move anyone.
+  function scenarioSpots(name, zone, liberos) {
+    const { six, off } = onCourt(name, zone, liberos);
+    const spots = name === 'receive' ? receiveSpots(six) : name === 'serve' ? serveSpots(six) : name === 'attack' ? attackSpots(six) : defenseSpots(six, name);
+    if (off) spots[off.id] = { ...(name === 'serve' ? SERVE_OFF_SPOT : OFF_SPOT) };
+    if (state.settings.keepScenarioDrags) {
+      const saved = state.custom[customKey(name, zone)];
+      if (saved) for (const [k, v] of Object.entries(saved)) {
+        const p = k === 'L' ? liberos[0] : zone[+k];
+        if (p) spots[p.id] = { x: v.x, y: v.y };
+      }
+    }
+    return spots;
+  }
+
   // Moves home players to the scenario's spots, worked out from their rotation spots in state.scen.base.
   function placeScenario(name) {
     const zs = zonesOf('home');
     if (zs.error !== undefined) return false;
-    const { six, off } = playingSix(zs.zone, zs.liberos);
-    const spots = name === 'receive' ? receiveSpots(six) : name === 'attack' ? attackSpots(six) : defenseSpots(six, name);
-    if (off) spots[off.id] = { ...OFF_SPOT };
-    if (state.settings.keepScenarioDrags) {
-      const saved = state.custom[customKey(name, zs.zone)];
-      if (saved) for (const [k, v] of Object.entries(saved)) {
-        const p = k === 'L' ? zs.liberos[0] : zs.zone[+k];
-        if (p) spots[p.id] = { x: v.x, y: v.y };
-      }
-    }
+    const spots = scenarioSpots(name, zs.zone, zs.liberos);
     for (const p of state.players) {
       if (p.team !== 'home') continue;
       const to = spots[p.id] || basePos(p);
@@ -1196,7 +1356,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     }
     ui.scenHinted = false;
     animateMoves();
-    renderScenario(); renderRoster(); save();
+    renderPlayers(); renderScenario(); renderRoster(); save();
   }
 
   function renderScenario() {
@@ -1204,7 +1364,11 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     document.querySelectorAll('#scenarios button').forEach(b => b.setAttribute('aria-pressed', b.dataset.scen === name));
     const zs = zonesOf('home');
     const setter = zs.zone && Object.entries(zs.zone).find(([, p]) => p.role === 'S');
-    const where = setter ? `setter in zone ${setter[0]}` : '';
+    let where = setter ? `setter in zone ${setter[0]}` : '';
+    if (name === 'serve' && zs.zone) {
+      const { off } = serveRoles();
+      where += `${where ? ' · ' : ''}${zs.zone[1].name || 'Zone 1'} serves${off ? ` · ${off.name || ROLE_NAME[off.role] || 'one player'} waits off court` : ''}`;
+    }
     $('#scenCaption').textContent = name === 'base'
       ? (where ? `Rotation spots · ${where}` : '')
       : `${SCEN_LABEL[name]}${OPP_HITTER[name] ? ` (${DEFENSE_NAME[state.settings.defense]})` : ''}${where ? ' · ' + where : ''} · ${state.settings.keepScenarioDrags ? 'drag to save your own spots' : 'drag to try ideas'}, Base to go back`;
@@ -1222,6 +1386,93 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     const t = $('#toast');
     t.textContent = msg; t.classList.add('show');
     clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), msg.length > 60 ? 4200 : 1800);
+  }
+
+  // ---------- All 6 rotations sheet ----------
+  // Six small courts showing the home lineup in every rotation, worked out from the current rotation spots
+  // without moving anyone. Tapping one jumps the court to that rotation and scenario.
+  ui.sheetKind = 'base';
+  const SHEET_HINT = {
+    base: 'Rotation spots. Tap a rotation to open it on the court.',
+    serve: 'Our serve: the zone 1 player serves. Tap a rotation to open it on the court.',
+    receive: 'Serve receive, with the overlap rules applied. Tap a rotation to open it on the court.'
+  };
+  const nextZone = z => (z === 1 ? 6 : z - 1);
+
+  function sheetRotation(zs, steps, kind) {
+    const zone = {};
+    for (let z = 1; z <= 6; z++) { let t = z; for (let i = 0; i < steps; i++) t = nextZone(t); zone[t] = zs.zone[z]; }
+    // Rotating keeps each zone's spot, so whoever is in zone z stands where today's zone z player stands.
+    let spots = {};
+    for (let z = 1; z <= 6; z++) spots[zone[z].id] = { ...basePos(zs.zone[z]) };
+    const backMB = [1, 5, 6].map(z => zone[z]).find(p => p.role === 'MB');
+    if (zs.liberos[0] && backMB) spots[zs.liberos[0].id] = liberoSpot(spots[backMB.id]);
+    if (kind !== 'base') spots = scenarioSpots(kind, zone, zs.liberos);
+    const setter = Object.entries(zone).find(([, p]) => p.role === 'S');
+    const roles = kind === 'serve' ? { server: zone[1], off: onCourt('serve', zone, zs.liberos).off } : {};
+    return { zone, spots, setterZone: setter && setter[0], ...roles };
+  }
+
+  function miniCourt(spots, players, server, off) {
+    const s = el('svg', { viewBox: '-2 7.9 12.2 12.3', 'aria-hidden': 'true' });
+    el('rect', { x: -2, y: 7.9, width: 12.2, height: 12.3, style: 'fill: var(--free)' }, s);
+    el('rect', { x: 0, y: 9, width: 9, height: 9, style: 'fill: var(--court)' }, s);
+    const line = (x1, y1, x2, y2, w = 0.06) => el('line', { x1, y1, x2, y2, stroke: '#fff', 'stroke-width': w }, s);
+    line(0, 9, 0, 18); line(9, 9, 9, 18); line(0, 18, 9, 18); line(0, 12, 9, 12);
+    line(-0.6, 9, 9.6, 9, 0.14);
+    for (const p of players) {
+      const at = spots[p.id];
+      if (!at) continue;
+      const g = el('g', { class: `player home${p === server ? ' serving' : ''}${p === off ? ' waiting' : ''}`, transform: `translate(${at.x} ${at.y})` }, s);
+      el('circle', { class: 'disc', r: R, style: `fill: ${roleVar(p.role)}` }, g);
+      el('text', { class: 'role', y: 0.02 }, g).textContent = badge(p);
+      el('text', { class: 'name', y: 0.98 }, g).textContent = p.name;
+      if (p === server) serveMark(g);
+    }
+    return s;
+  }
+
+  function renderSheet() {
+    const zs = zonesOf('home');
+    const grid = $('#sheetGrid');
+    grid.innerHTML = '';
+    document.querySelectorAll('#sheetKind button').forEach(b => b.setAttribute('aria-pressed', b.dataset.kind === ui.sheetKind));
+    $('#sheetHint').textContent = SHEET_HINT[ui.sheetKind];
+    const cur = state.rot.home;
+    for (let r = 1; r <= 6; r++) {
+      const { zone, spots, setterZone, server, off } = sheetRotation(zs, (r - cur + 6) % 6, ui.sheetKind);
+      const players = [...Object.values(zone), ...zs.liberos];
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.classList.toggle('on', r === cur);
+      b.setAttribute('aria-label', `Rotation ${r}${setterZone ? `, setter in zone ${setterZone}` : ''}. Open it on the court.`);
+      const notes = [setterZone && `Setter in ${setterZone}`, ui.sheetKind === 'serve' && `${esc(zone[1].name || 'Zone 1')} serves`, r === cur && 'now'].filter(Boolean);
+      b.innerHTML = `<span class="cap"><b>Rotation ${r}</b><span>${notes.join(' · ')}</span></span>`;
+      b.appendChild(miniCourt(spots, players, server, off));
+      b.onclick = () => goToRotation(r, ui.sheetKind);
+      li.appendChild(b); grid.appendChild(li);
+    }
+  }
+
+  function openSheet() {
+    const zs = zonesOf('home');
+    if (zs.error !== undefined) return toast(zoneError('home', zs.error));
+    renderSheet();
+    $('#sheet').showModal();
+  }
+
+  // Rotates the home team forward to rotation r and shows the chosen scenario, as a single undo step.
+  function goToRotation(r, kind) {
+    $('#sheet').close();
+    const steps = (r - state.rot.home + 6) % 6;
+    if (!steps && kind === (state.scen ? state.scen.name : 'base')) return;
+    commit();
+    ui.oneStep = true;
+    try {
+      for (let i = 0; i < steps; i++) rotate('home', 1);
+      setScenario(kind);
+    } finally { ui.oneStep = false; }
   }
 
   // ---------- Pointer interaction ----------
@@ -1405,6 +1656,11 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   $('#addRole').innerHTML = roleOptions('OH');
   document.querySelectorAll('#tools button').forEach(b => b.onclick = () => setTool(b.dataset.tool));
   $('#quickRotate').onclick = () => rotate('home', 1);
+  $('#openSheet').onclick = openSheet;
+  $('#sheetClose').onclick = () => $('#sheet').close();
+  $('#sheetPrint').onclick = () => window.print();
+  $('#sheet').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
+  document.querySelectorAll('#sheetKind button').forEach(b => b.onclick = () => { ui.sheetKind = b.dataset.kind; renderSheet(); });
 
   // Phones: the app name moves above the tools, and the Selected editor sits right under the court
   // so you can edit a player without scrolling away. Placeholders mark where they go back on wider screens.
