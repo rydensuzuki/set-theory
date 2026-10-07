@@ -5,280 +5,385 @@
 <title>Set Theory</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;1,800&family=Barlow:wght@400;500;600;700&family=Kalam:wght@400;700&display=swap">
 <style>
-/* Layout: one-screen tool. Court fills the left stage under a slim tool bar; a coach's side panel on the right (stacks below on phones). */
+/* Layout: one-screen tool. Court fills the left stage under a slim tool bar; a coach's side panel on the right (stacks below on phones).
+   System: type scale --fs-1..6, radii --r-1 (controls) and --r-2 (containers), spacing in 4px steps.
+   Themes: data-look on <html> picks Broadcast (default), Clipboard or Pro; each sets the same tokens for light and dark. */
 :root {
-  --bg: #e9edf3;
-  --panel: #ffffff;
-  --fg: #131a25;
-  --muted: #5a6577;
-  --line: #d3dae4;
-  --soft: #f2f5f9;
-  --accent: #e2773a;
-  --accent-ink: #1a0f06;
-  --danger: #c23b30;
-  --focus: #2c5d96;
-  --ok: #1f9d55;
-  --warn: #c98a12;
-
-  /* Court surface: same in both themes, it is a real floor */
-  --court: #e2773a;
-  --free: #2c5d96;
-  --court-line: #ffffff;
-  --net: #10141b;
-  --run: #ffffff;
-  --ball: #ffe45c;
-
-  /* Role colors (home jerseys) */
-  --r-S: #ffd447;
-  --r-OH: #6eb8ff;
-  --r-MB: #4cd08a;
-  --r-OPP: #c59bff;
-  --r-L: #ffffff;
-  --r-DS: #ff8fb8;
-  --r-none: #c9cdd6;
-  --opp-fill: #20242d;
-  --disc-ink: #12151c;
-
+  --fs-1: 12px; --fs-2: 13px; --fs-3: 15px; --fs-4: 18px; --fs-5: 24px; --fs-6: 30px;
+  --r-1: 6px; --r-2: 10px;
   --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
   --font-body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --radius: 8px;
+  --font-hand: "Kalam", "Segoe Print", "Bradley Hand", cursive;
+  --font-names: var(--font-display);
+  --danger: #c23b30; --ok: #1f9d55; --warn: #c98a12;
+  --serve-c: #ffd23f;
+  --seg-shadow: 0 1px 2px rgba(16, 24, 40, .14), 0 0 0 1px rgba(16, 24, 40, .06);
+  --shadow-pop: 0 18px 50px rgba(10, 16, 28, .28);
+
+  /* Broadcast is the default look; the others override these */
+  --bg: #e8ecf2; --panel: #ffffff; --fg: #0b1a2e; --muted: #56647a; --line: #d6dde7; --soft: #f1f4f8;
+  --seg-track: #e3e8ef; --seg-on: #ffffff; --accent: #e8a800; --accent-ink: #0b1a2e; --focus: #2c6ad6;
+  --court: #e2773a; --free: #1f4f91; --court-line: #ffffff; --line-w: .06px; --net: #0b1a2e; --post: #0b1a2e;
+  --bench: rgba(6, 16, 34, .22); --bench-line: rgba(255, 255, 255, .2); --court-label: rgba(255, 255, 255, .5);
+  --run: #ffffff; --ball: #ffe45c; --sel: #ffffff; --opp-disc: rgba(11, 26, 46, .78);
+  --r-S: #ffd447; --r-OH: #6eb8ff; --r-MB: #4cd08a; --r-OPP: #c59bff; --r-L: #ffffff; --r-DS: #ff8fb8; --r-none: #c9cdd6;
+  --disc-ink: #0b1a2e; --chip-ink: #0b1a2e;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e131b; --panel: #151c27; --fg: #e7ecf3; --muted: #93a0b3; --line: #263142;
-    --soft: #1b2431; --accent: #f08a4b; --accent-ink: #1a0f06; --danger: #ff7a6e; --focus: #8bb8ec; --ok: #4cd08a; --warn: #f0b84a;
+    --bg: #08111f; --panel: #0d1a2d; --fg: #eaf0f8; --muted: #8fa0b8; --line: #1d2e47; --soft: #12223a;
+    --seg-track: #07101c; --seg-on: #1d3150; --seg-shadow: 0 1px 2px rgba(0, 0, 0, .45); --accent: #ffc928; --focus: #8bb8ec; --danger: #ff7a6e;
+    --court: #d06a32; --free: #12325f; --shadow-pop: 0 18px 50px rgba(0, 0, 0, .6);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e131b; --panel: #151c27; --fg: #e7ecf3; --muted: #93a0b3; --line: #263142;
-  --soft: #1b2431; --accent: #f08a4b; --accent-ink: #1a0f06; --danger: #ff7a6e; --focus: #8bb8ec; --ok: #4cd08a; --warn: #f0b84a;
+  --bg: #08111f; --panel: #0d1a2d; --fg: #eaf0f8; --muted: #8fa0b8; --line: #1d2e47; --soft: #12223a;
+  --seg-track: #07101c; --seg-on: #1d3150; --seg-shadow: 0 1px 2px rgba(0, 0, 0, .45); --accent: #ffc928; --focus: #8bb8ec; --danger: #ff7a6e;
+  --court: #d06a32; --free: #12325f; --shadow-pop: 0 18px 50px rgba(0, 0, 0, .6);
   color-scheme: dark;
 }
 
+/* ---------- Look A: Pro tool. Calm neutrals, sand court, white discs ringed in the role color ---------- */
+:root[data-look="pro"] {
+  --bg: #f3f4f6; --panel: #fcfcfd; --fg: #16181d; --muted: #5f6672; --line: #e2e5ea; --soft: #f1f2f5;
+  --seg-track: #eceef2; --seg-on: #ffffff; --accent: #2f6fd6; --accent-ink: #ffffff; --focus: #2f6fd6;
+  --court: #dcc6ab; --free: #cfd8e3; --court-line: #ffffff; --line-w: .08px; --net: #2a2f38; --post: #2a2f38;
+  --bench: rgba(30, 40, 55, .06); --bench-line: rgba(30, 40, 55, .18); --court-label: rgba(40, 46, 56, .45);
+  --run: #1d2026; --ball: #d9480f; --sel: #1d2026; --opp-disc: #c3c9d1;
+  --r-S: #d39b12; --r-OH: #2f6fd6; --r-MB: #1f9d63; --r-OPP: #7c4fd1; --r-L: #5b6470; --r-DS: #c94f86; --r-none: #8b929c;
+  --disc-ink: #16181d; --chip-ink: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-look="pro"]:not([data-theme="light"]) {
+    --bg: #0f1115; --panel: #16191f; --fg: #e6e8ec; --muted: #9aa1ad; --line: #262a33; --soft: #1c2027;
+    --seg-track: #0d0f13; --seg-on: #2a2f39; --accent: #6aa5ff; --focus: #6aa5ff;
+    --court: #3a4352; --free: #232832; --court-line: rgba(255, 255, 255, .55); --net: #0b0d10; --post: #0b0d10;
+    --bench: rgba(255, 255, 255, .03); --bench-line: rgba(255, 255, 255, .12); --court-label: rgba(230, 232, 236, .4);
+    --run: #e6e8ec; --ball: #ffd23f; --sel: #e6e8ec; --opp-disc: #2f343e;
+    --r-S: #f0c040; --r-OH: #6aa5ff; --r-MB: #4cd08a; --r-OPP: #b08cff; --r-L: #c9ced6; --r-DS: #ff8fb8; --chip-ink: #16181d;
+  }
+}
+:root[data-look="pro"][data-theme="dark"] {
+  --bg: #0f1115; --panel: #16191f; --fg: #e6e8ec; --muted: #9aa1ad; --line: #262a33; --soft: #1c2027;
+  --seg-track: #0d0f13; --seg-on: #2a2f39; --accent: #6aa5ff; --focus: #6aa5ff;
+  --court: #3a4352; --free: #232832; --court-line: rgba(255, 255, 255, .55); --net: #0b0d10; --post: #0b0d10;
+  --bench: rgba(255, 255, 255, .03); --bench-line: rgba(255, 255, 255, .12); --court-label: rgba(230, 232, 236, .4);
+  --run: #e6e8ec; --ball: #ffd23f; --sel: #e6e8ec; --opp-disc: #2f343e;
+  --r-S: #f0c040; --r-OH: #6aa5ff; --r-MB: #4cd08a; --r-OPP: #b08cff; --r-L: #c9ced6; --r-DS: #ff8fb8; --chip-ink: #16181d;
+}
+
+/* ---------- Look C: Clipboard. Paper and ink, line-drawn court, marker circles; dark is a chalkboard ---------- */
+:root[data-look="clipboard"] {
+  --bg: #ebe5d8; --panel: #f9f6ef; --fg: #1f2430; --muted: #6b6658; --line: #ddd4c2; --soft: #f1ece1;
+  --seg-track: #e8e1d2; --seg-on: #fffdf8; --accent: #c2410c; --accent-ink: #fffdf8; --focus: #1f4fbf;
+  --court: #fbf8f1; --free: #efe8da; --court-line: #2a2f3a; --line-w: .05px; --net: #1f2430; --post: #1f2430;
+  --bench: transparent; --bench-line: rgba(31, 36, 48, .35); --court-label: rgba(31, 36, 48, .55);
+  --run: #1f2430; --ball: #c2410c; --sel: #1f2430; --opp-disc: #e4ddcd;
+  --r-S: #c98a00; --r-OH: #1f5fbf; --r-MB: #17804a; --r-OPP: #6b3fb0; --r-L: #3d4350; --r-DS: #b83f72; --r-none: #8c8576;
+  --disc-ink: #1f2430; --chip-ink: #fffdf8; --font-names: var(--font-hand);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-look="clipboard"]:not([data-theme="light"]) {
+    --bg: #121815; --panel: #19211d; --fg: #e9ede6; --muted: #9aa79e; --line: #2a3530; --soft: #1f2924;
+    --seg-track: #111613; --seg-on: #2b3732; --accent: #f5d76e; --accent-ink: #121815; --focus: #8ec5ff;
+    --court: #23302a; --free: #1b2621; --court-line: rgba(240, 240, 230, .78); --net: #e9ede6; --post: #e9ede6;
+    --bench-line: rgba(240, 240, 230, .3); --court-label: rgba(240, 240, 230, .5);
+    --run: #e9ede6; --ball: #f5d76e; --sel: #e9ede6; --opp-disc: #2b3732;
+    --r-S: #f5d76e; --r-OH: #8ec5ff; --r-MB: #8fe0a8; --r-OPP: #c9a8ff; --r-L: #e9ede6; --r-DS: #ffb0cc; --chip-ink: #121815;
+  }
+}
+:root[data-look="clipboard"][data-theme="dark"] {
+  --bg: #121815; --panel: #19211d; --fg: #e9ede6; --muted: #9aa79e; --line: #2a3530; --soft: #1f2924;
+  --seg-track: #111613; --seg-on: #2b3732; --accent: #f5d76e; --accent-ink: #121815; --focus: #8ec5ff;
+  --court: #23302a; --free: #1b2621; --court-line: rgba(240, 240, 230, .78); --net: #e9ede6; --post: #e9ede6;
+  --bench-line: rgba(240, 240, 230, .3); --court-label: rgba(240, 240, 230, .5);
+  --run: #e9ede6; --ball: #f5d76e; --sel: #e9ede6; --opp-disc: #2b3732;
+  --r-S: #f5d76e; --r-OH: #8ec5ff; --r-MB: #8fe0a8; --r-OPP: #c9a8ff; --r-L: #e9ede6; --r-DS: #ffb0cc; --chip-ink: #121815;
+}
+
+/* ---------- Base ---------- */
 html, body { height: 100%; }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body {
-  background: var(--bg); color: var(--fg);
-  font-family: var(--font-body); font-size: 15px; line-height: 1.45;
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: var(--fs-3); line-height: 1.45;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 button, input, select { font: inherit; color: inherit; }
 button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ic { width: 16px; height: 16px; flex: none; }
 
 .app { display: grid; grid-template-columns: minmax(0, 1fr) 380px; height: 100%; }
 
 /* Stage */
 .stage { display: flex; flex-direction: column; gap: 12px; min-height: 0; min-width: 0; padding: 16px; }
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
-.seg { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 3px; gap: 2px; }
+.seg { display: inline-flex; background: var(--seg-track); border-radius: var(--r-2); padding: 4px; gap: 4px; }
 .seg button {
-  border: 0; background: transparent; padding: 6px 12px; border-radius: 5px; cursor: pointer;
-  font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: .02em;
-  color: var(--muted); display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  border: 0; background: transparent; padding: 6px 12px; border-radius: var(--r-1); cursor: pointer;
+  font-family: var(--font-body); font-weight: 600; font-size: var(--fs-2);
+  color: var(--muted); display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
 }
 @media (hover: hover) { .seg button:hover { color: var(--fg); } }
-.seg button[aria-pressed="true"] { background: var(--fg); color: var(--panel); }
+.seg button[aria-pressed="true"] { background: var(--seg-on); color: var(--fg); box-shadow: var(--seg-shadow); }
 .seg button svg { width: 16px; height: 16px; flex: none; }
-kbd {
-  font-family: var(--font-body); font-size: 11px; line-height: 1; padding: 2px 5px; border-radius: 4px;
-  border: 1px solid currentColor; opacity: .55;
-}
 .court-wrap { flex: 1; min-height: 0; display: flex; justify-content: center; }
-#board { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; -webkit-user-select: none; border-radius: 6px; }
+#board { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; -webkit-user-select: none; border-radius: var(--r-2); }
 #board.tool-run, #board.tool-ball { cursor: crosshair; }
 
 /* Panel */
-.panel { background: var(--panel); border-left: 1px solid var(--line); overflow-y: auto; padding: 20px 20px 28px; display: flex; flex-direction: column; gap: 22px; min-width: 0; }
-.brand { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
-.theme-seg button { font-size: 13px; padding: 4px 9px; }
-.brand h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1; letter-spacing: .01em; text-transform: uppercase; }
+.panel { background: var(--panel); border-left: 1px solid var(--line); overflow-y: auto; padding: 20px 20px 28px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.brand { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.brand h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: var(--fs-6); line-height: 1; letter-spacing: .01em; text-transform: uppercase; }
 .brand h1 span { color: var(--accent); }
-.brand p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
-.sec { display: flex; flex-direction: column; gap: 10px; }
+.brand p { margin: 4px 0 0; color: var(--muted); font-size: var(--fs-2); }
+.brand > div { flex: 1; min-width: 0; }
+.brand > .btn { flex: none; }
+.sec { display: flex; flex-direction: column; gap: 12px; }
 .sec h2 {
-  margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 13px; text-transform: uppercase;
-  letter-spacing: .12em; color: var(--muted); display: flex; justify-content: space-between; align-items: baseline;
+  margin: 0; font-family: var(--font-body); font-weight: 600; font-size: var(--fs-3); color: var(--fg);
+  display: flex; justify-content: space-between; align-items: baseline;
 }
-.sec h2 small { font-family: var(--font-body); letter-spacing: 0; text-transform: none; font-size: 12px; font-weight: 400; }
+.sec h2 small { font-weight: 400; font-size: var(--fs-1); color: var(--muted); }
+.fold { gap: 0; border-top: 1px solid var(--line); padding-top: 12px; }
+.fold[open] { gap: 12px; }
+.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; min-height: 28px; }
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary::after { content: ""; width: 7px; height: 7px; border-right: 1.6px solid var(--muted); border-bottom: 1.6px solid var(--muted); transform: rotate(45deg) translateY(-2px); transition: transform .15s; margin-right: 4px; }
+.fold[open] > summary::after { transform: rotate(225deg) translateY(-2px); }
+.fold > summary h2 { flex: 1; justify-content: flex-start; gap: 8px; }
+.rot-extra { justify-content: space-between; }
+.board-actions { justify-content: flex-end; gap: 4px; border-top: 1px solid var(--line); padding-top: 12px; }
+.small-dlg { width: min(420px, calc(100vw - 32px)); padding: 20px; border: 1px solid var(--line); border-radius: var(--r-2); background: var(--panel); color: var(--fg); box-shadow: var(--shadow-pop); }
+.small-dlg[open] { display: flex; flex-direction: column; gap: 12px; }
+.small-dlg::backdrop { background: rgba(8, 12, 18, .45); }
+.small-dlg .hint { margin-top: -4px; }
+.share-files .btn { flex: 1; }
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .row > * { min-width: 0; }
 .grow { flex: 1; }
-.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: var(--fs-1); color: var(--muted); }
 input[type="text"], select {
-  width: 100%; background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; color: var(--fg); font-size: 15px;
+  width: 100%; background: var(--soft); border: 1px solid var(--line); border-radius: var(--r-1); padding: 8px 12px; color: var(--fg); font-size: var(--fs-3);
 }
 input[type="text"]:focus, select:focus { border-color: var(--focus); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 25%, transparent); }
 .btn {
-  border: 1px solid var(--line); background: var(--soft); border-radius: 6px; padding: 8px 12px; cursor: pointer;
-  font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: .02em; white-space: nowrap;
+  border: 1px solid var(--line); background: var(--panel); border-radius: var(--r-1); padding: 8px 12px; cursor: pointer;
+  font-family: var(--font-body); font-weight: 600; font-size: var(--fs-2); white-space: nowrap;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
 }
 @media (hover: hover) { .btn:hover { border-color: var(--muted); } }
 .btn:disabled { opacity: .4; cursor: default; }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.btn.primary:hover { filter: brightness(1.06); }
+.btn.primary { background: var(--fg); border-color: var(--fg); color: var(--panel); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; border-color: transparent; }
+@media (hover: hover) { .btn.ghost:hover { background: var(--soft); border-color: transparent; } }
 .btn.danger { color: var(--danger); }
 .btn.danger.armed { background: var(--danger); border-color: var(--danger); color: #fff; }
-.btn.small { padding: 5px 9px; font-size: 14px; }
-.btn svg { width: 15px; height: 15px; flex: none; }
-.btn small { font-family: var(--font-body); font-weight: 500; font-size: 12px; opacity: .75; font-variant-numeric: tabular-nums; }
+.btn.small { padding: 4px 8px; }
+.btn svg { width: 16px; height: 16px; flex: none; }
+.btn small { font-weight: 500; font-size: var(--fs-1); opacity: .7; font-variant-numeric: tabular-nums; }
 .team-seg { width: 100%; }
 .team-seg button { flex: 1; justify-content: center; }
-.hint { margin: 0; color: var(--muted); font-size: 13px; }
-.note { margin: 0; font-size: 13px; padding: 8px 10px; border-radius: 6px; background: var(--soft); color: var(--muted); }
+.hint { margin: 0; color: var(--muted); font-size: var(--fs-2); }
+.note { margin: 0; font-size: var(--fs-2); padding: 8px 12px; border-radius: var(--r-1); background: var(--soft); color: var(--muted); }
 
 .rot-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
 .rot-row:first-of-type { border-top: 0; padding-top: 0; }
-.rot-name { font-weight: 600; display: flex; flex-direction: column; line-height: 1.2; }
-.rot-name small { font-weight: 400; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
-.check { display: flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; }
-.check input { width: 16px; height: 16px; accent-color: var(--accent); }
+.rot-name { font-weight: 600; display: flex; flex-direction: column; line-height: 1.25; }
+.rot-name small { font-weight: 400; color: var(--muted); font-size: var(--fs-1); font-variant-numeric: tabular-nums; }
+.check { display: flex; gap: 8px; align-items: center; font-size: var(--fs-2); cursor: pointer; }
+.check input { width: 16px; height: 16px; accent-color: var(--fg); }
 
 .roster { display: flex; flex-direction: column; gap: 12px; }
-.roster h3 { margin: 0 0 4px; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.roster h3 { margin: 0 0 4px; font-size: var(--fs-1); font-weight: 600; color: var(--muted); }
 .roster ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
 .roster li button {
-  width: 100%; display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; text-align: left;
-  background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 4px 6px; cursor: pointer;
+  width: 100%; display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; text-align: left;
+  background: transparent; border: 0; border-radius: var(--r-1); padding: 4px 8px; cursor: pointer;
 }
-.roster li button:hover { background: var(--soft); }
-.roster li button.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
-.roster .where { font-size: 12px; color: var(--muted); }
+@media (hover: hover) { .roster li button:hover { background: var(--soft); } }
+.roster li button.on { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.roster .where { font-size: var(--fs-1); color: var(--muted); }
 .roster .pname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chip {
-  font-family: var(--font-display); font-weight: 700; font-size: 13px; text-align: center; border-radius: 20px; padding: 1px 0;
-  color: var(--disc-ink); border: 1.5px solid transparent;
+  font-family: var(--font-display); font-weight: 700; font-size: var(--fs-2); text-align: center; border-radius: 999px; padding: 0;
+  color: var(--chip-ink); border: 1.5px solid transparent;
 }
-.chip.opp { background: var(--opp-fill) !important; }
-.empty { color: var(--muted); font-size: 13px; margin: 0; }
+.chip.opp { background: var(--opp-disc) !important; color: var(--fg) !important; }
+.empty { color: var(--muted); font-size: var(--fs-2); margin: 0; }
 
-.keys { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 12.5px; color: var(--muted); margin: 0; }
-.keys dt { font-family: var(--font-display); font-weight: 600; color: var(--fg); }
+.keys { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: var(--fs-2); color: var(--muted); margin: 0; }
+.keys dt { font-weight: 600; color: var(--fg); }
 .keys dd { margin: 0; }
 .touch-only, .m-only, .m-slot { display: none; }
 
-/* Scenarios */
-.scen-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+/* Scenarios and the status line */
+.scen-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 .scen-bar .seg { flex-wrap: wrap; }
-.scen-bar .seg button { font-size: 14px; padding: 5px 10px; }
 .scen-bar .short { display: none; }
-.scen-label { font-family: var(--font-display); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
-#scenCaption { font-size: 13px; color: var(--muted); }
+.scen-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+#scenCaption { font-size: var(--fs-2); color: var(--muted); display: flex; flex-wrap: wrap; align-items: baseline; }
+.cap-part b { font-weight: 600; color: var(--fg); }
+.cap-part + .cap-part::before { content: "·"; margin: 0 8px; color: var(--muted); }
 .overlap-note {
-  flex-basis: 100%; margin: 0; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 600;
-  color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
+  flex-basis: 100%; margin: 0; padding: 8px 12px 8px 36px; border-radius: var(--r-1); font-size: var(--fs-2); font-weight: 600; position: relative;
+  color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, transparent);
 }
-.overlap-note::before { content: "⚠ "; }
+.overlap-note::before {
+  content: ""; position: absolute; left: 12px; top: 50%; width: 16px; height: 16px; margin-top: -8px; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1.5 15 14H1z' fill='none' stroke='black' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M8 6v3.6' stroke='black' stroke-width='1.7' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='11.7' r='1' fill='black'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1.5 15 14H1z' fill='none' stroke='black' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M8 6v3.6' stroke='black' stroke-width='1.7' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='11.7' r='1' fill='black'/%3E%3C/svg%3E") center / contain no-repeat;
+}
 
 /* Settings */
-.set-group .seg button { white-space: normal; line-height: 1.2; padding: 7px 8px; }
+.set-group .seg button { white-space: normal; line-height: 1.25; padding: 8px; }
 
 /* Share */
-.share { display: flex; flex-direction: column; gap: 10px; }
-.share .row .btn { flex: 1; }
-#shareUrl { font-size: 13px; color: var(--muted); }
-.import { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--fg); }
+#shareUrl { font-size: var(--fs-2); color: var(--muted); }
+.import { display: flex; flex-direction: column; gap: 8px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--fg); }
 
 /* Lineup generator */
-.tabbody { display: flex; flex-direction: column; gap: 22px; }
-.sq-list { display: flex; flex-direction: column; gap: 6px; }
-.sq-row { display: grid; grid-template-columns: minmax(0, 1fr) auto 28px; gap: 6px; align-items: center; }
-.sq-row input[type="text"] { padding: 6px 8px; font-size: 14px; }
-.sq-roles { display: flex; gap: 3px; }
+.tabbody { display: flex; flex-direction: column; gap: 24px; }
+.sq-list { display: flex; flex-direction: column; gap: 8px; }
+.sq-row { display: grid; grid-template-columns: minmax(0, 1fr) auto 28px; gap: 8px; align-items: center; }
+.sq-row input[type="text"] { padding: 6px 8px; }
+.sq-roles { display: flex; gap: 4px; }
 .rt {
-  width: 36px; padding: 5px 0; border-radius: 5px; border: 1px solid var(--line); background: transparent; cursor: pointer;
-  font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--muted);
+  width: 36px; padding: 4px 0; border-radius: var(--r-1); border: 1px solid var(--line); background: transparent; cursor: pointer;
+  font-family: var(--font-display); font-weight: 700; font-size: var(--fs-2); color: var(--muted);
 }
-.rt:hover { border-color: var(--muted); }
-.rt[aria-pressed="true"] { background: var(--rc); border-color: var(--rc); color: var(--disc-ink); }
-.x { width: 28px; height: 28px; border: 0; background: transparent; color: var(--muted); font-size: 18px; line-height: 1; border-radius: 5px; cursor: pointer; }
-.x:hover { background: var(--soft); color: var(--danger); }
-.f-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 28px; gap: 6px; align-items: center; }
-.f-row select { padding: 6px 8px; font-size: 14px; }
-.lineups { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.lu { border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
-.lu.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+@media (hover: hover) { .rt:hover { border-color: var(--muted); } }
+.rt[aria-pressed="true"] { background: var(--rc); border-color: var(--rc); color: var(--chip-ink); }
+.x { width: 28px; height: 28px; border: 0; background: transparent; color: var(--muted); border-radius: var(--r-1); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.x svg { width: 14px; height: 14px; }
+@media (hover: hover) { .x:hover { background: var(--soft); color: var(--danger); } }
+.f-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 28px; gap: 8px; align-items: center; }
+.f-row select { padding: 6px 8px; }
+.lineups { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.lu { border-top: 1px solid var(--line); padding: 12px 0; display: flex; flex-direction: column; gap: 8px; }
+.lu.on { background: color-mix(in srgb, var(--accent) 12%, transparent); border-radius: var(--r-2); border-top-color: transparent; padding: 12px; margin: 0 -12px; }
+.lu.on + .lu { border-top-color: transparent; }
 .lu-top { display: flex; align-items: center; gap: 8px; }
-.lu-top .row { margin-left: auto; gap: 6px; }
-.lu-num { font-family: var(--font-display); font-weight: 700; font-size: 16px; font-variant-numeric: tabular-nums; }
-.lu-order { font-size: 12px; color: var(--muted); }
-.lu-seq { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 4px; font-size: 14px; }
-.lu-seq li { display: inline-flex; align-items: center; gap: 5px; }
-.lu-seq li:not(:last-child)::after { content: "→"; color: var(--muted); margin: 0 2px; }
-.lu-seq .chip { padding: 1px 5px; min-width: 26px; font-size: 12px; }
-.lu-meta { margin: 0; font-size: 12.5px; color: var(--muted); }
-.lu-swaps { display: flex; gap: 6px; flex-wrap: wrap; }
-.bench-label { font-family: var(--font-display); font-weight: 700; font-size: .34px; letter-spacing: .1px; fill: #fff; opacity: .6; text-anchor: middle; }
+.lu-top .row { margin-left: auto; gap: 8px; }
+.lu-num { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-4); font-variant-numeric: tabular-nums; }
+.lu-order { font-size: var(--fs-1); color: var(--muted); }
+.lu-seq { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 4px; font-size: var(--fs-2); }
+.lu-seq li { display: inline-flex; align-items: center; gap: 4px; }
+.lu-seq li:not(:last-child)::after { content: ""; width: 5px; height: 5px; border-top: 1.5px solid var(--muted); border-right: 1.5px solid var(--muted); transform: rotate(45deg); margin: 0 6px 0 2px; }
+.lu-seq .chip { padding: 0 4px; min-width: 28px; font-size: var(--fs-1); }
+.lu-meta { margin: 0; font-size: var(--fs-1); color: var(--muted); }
+.lu-swaps { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* SVG board */
-.court-label { font-family: var(--font-display); font-weight: 700; font-size: .5px; letter-spacing: .18px; fill: #fff; opacity: .72; text-anchor: middle; }
-.zone-num { font-family: var(--font-display); font-weight: 700; font-size: 1.7px; fill: #fff; opacity: .2; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+/* ---------- SVG board (colors come from the look's tokens) ---------- */
+.c-free { fill: var(--free); }
+.c-court { fill: var(--court); }
+.c-line { stroke: var(--court-line); stroke-width: var(--line-w); fill: none; }
+.c-ext { stroke: var(--court-line); stroke-width: .05px; stroke-dasharray: .15 .2; opacity: .4; }
+.c-net { stroke: var(--net); stroke-width: .16px; stroke-linecap: round; }
+.c-net-hi { stroke: #fff; stroke-width: .03px; opacity: .5; }
+.c-post { fill: var(--post); }
+.c-antenna { fill: #fff; }
+.c-antenna-tip { fill: #d6352b; }
+.c-bench { fill: var(--bench); stroke: var(--bench-line); stroke-width: .03px; }
+.bench-label { font-family: var(--font-display); font-weight: 700; font-size: .32px; letter-spacing: .1px; fill: var(--court-label); opacity: .7; text-anchor: middle; }
+.court-label { font-family: var(--font-display); font-weight: 700; font-size: .46px; letter-spacing: .18px; fill: var(--court-label); text-anchor: middle; }
+.zone-num { font-family: var(--font-display); font-weight: 700; font-size: 1.7px; fill: var(--court-label); opacity: .45; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .player { cursor: grab; }
 #board.dragging .player { cursor: grabbing; }
 #board.tool-run .player, #board.tool-ball .player { cursor: crosshair; }
 #board.animating .player { transition: transform .5s cubic-bezier(.3,.75,.2,1); }
-.player .disc { stroke: rgba(10, 14, 20, .55); stroke-width: .06px; }
-.player.opp .disc { fill: var(--opp-fill) !important; stroke-width: .11px; }
+.player .disc { fill: var(--rc); stroke: rgba(10, 14, 20, .7); stroke-width: .07px; }
+.player.opp .disc { fill: var(--opp-disc); stroke: var(--rc); stroke-width: .08px; stroke-opacity: .85; }
 .player .role { font-family: var(--font-display); font-weight: 700; font-size: .42px; text-anchor: middle; dominant-baseline: central; fill: var(--disc-ink); pointer-events: none; }
-.player.opp .role { fill: #fff; }
+.player.opp .role { fill: #fff; opacity: .85; }
 .player .name {
-  font-family: var(--font-display); font-weight: 600; font-size: .4px; text-anchor: middle; fill: #fff;
+  font-family: var(--font-names); font-weight: 600; font-size: .4px; text-anchor: middle; fill: #fff;
   stroke: rgba(10, 14, 20, .78); stroke-width: .13px; stroke-linejoin: round; paint-order: stroke; pointer-events: none;
 }
+.player.opp .name { opacity: .6; }
 .player .hit { fill: transparent; }
 .player .serve-mark { display: none; pointer-events: none; }
 .player.serving .serve-mark { display: inline; }
-.serve-glow { fill: none; stroke: var(--ball); stroke-width: .1px; }
-.serve-ball { fill: var(--ball); stroke: var(--net); stroke-width: .045px; }
-.serve-seam { fill: none; stroke: var(--net); stroke-width: .035px; }
-.serve-tag { font-family: var(--font-display); font-weight: 700; font-size: .3px; letter-spacing: .03px; text-anchor: middle; fill: var(--net); }
-.serve-tag-bg { fill: var(--ball); }
+.serve-glow { fill: none; stroke: var(--serve-c); stroke-width: .1px; }
+.serve-ball { fill: var(--serve-c); stroke: #10141b; stroke-width: .045px; }
+.serve-seam { fill: none; stroke: #10141b; stroke-width: .035px; }
+.serve-tag { font-family: var(--font-display); font-weight: 700; font-size: .3px; letter-spacing: .03px; text-anchor: middle; fill: #10141b; }
+.serve-tag-bg { fill: var(--serve-c); }
 .player.waiting { opacity: .5; }
-.player.waiting .disc { stroke: #fff; stroke-width: .06px; stroke-dasharray: .14 .1; }
-.player .ring { fill: rgba(255,255,255,.22); stroke: #fff; stroke-width: .07px; stroke-dasharray: .22 .13; opacity: 0; }
+.player.waiting .disc { stroke: var(--sel); stroke-width: .06px; stroke-dasharray: .14 .1; }
+.player .ring { fill: color-mix(in srgb, var(--sel) 22%, transparent); stroke: var(--sel); stroke-width: .07px; stroke-dasharray: .22 .13; opacity: 0; }
 .player.selected .ring { opacity: 1; }
 .arrow .hit { stroke: transparent; stroke-width: .55px; cursor: pointer; }
 .arrow .shaft { fill: none; stroke-width: .09px; stroke-linecap: round; pointer-events: none; }
 .arrow.run .shaft { stroke: var(--run); }
 .arrow.ball .shaft { stroke: var(--ball); stroke-dasharray: .32 .2; }
-.arrow.selected .shaft { stroke-width: .14px; filter: drop-shadow(0 0 .12px rgba(0,0,0,.9)); }
+.arrow.selected .shaft { stroke-width: .14px; filter: drop-shadow(0 0 .12px rgba(0,0,0,.6)); }
 #board.tool-run .arrow .hit, #board.tool-ball .arrow .hit { pointer-events: none; }
 .handle { fill: #fff; stroke: var(--net); stroke-width: .06px; cursor: move; }
 .overlap-line { stroke: #b3001b; stroke-width: .12px; stroke-linecap: round; }
 .overlap-line.top { stroke: #fff; stroke-width: .05px; stroke-dasharray: .18 .14; }
 .overlap-ring { fill: rgba(214, 16, 40, .78); stroke: #fff; stroke-width: .07px; }
-.marquee { fill: rgba(255,255,255,.12); stroke: #fff; stroke-width: .04px; stroke-dasharray: .15 .1; pointer-events: none; }
+.marquee { fill: color-mix(in srgb, var(--sel) 12%, transparent); stroke: var(--sel); stroke-width: .04px; stroke-dasharray: .15 .1; pointer-events: none; }
+
+/* Look A players: white discs ringed in the role color, plain dark names */
+[data-look="pro"] .player.home .disc { fill: var(--panel); stroke: var(--rc); stroke-width: .1px; }
+[data-look="pro"] .player.home .role { fill: var(--rc); }
+[data-look="pro"] .player .name { fill: var(--fg); stroke: var(--court); stroke-width: .1px; font-family: var(--font-body); font-weight: 600; font-size: .36px; }
+[data-look="pro"] .player.opp .disc { stroke: transparent; }
+[data-look="pro"] .player.opp .role { fill: var(--fg); opacity: .6; }
+[data-look="pro"] .c-net-hi { opacity: 0; }
+
+/* Look B players: jersey discs with a white rim and bold uppercase names */
+[data-look="broadcast"] .player.home .disc { stroke: #fff; stroke-width: .09px; }
+[data-look="broadcast"] .player .name { text-transform: uppercase; font-weight: 700; font-size: .34px; letter-spacing: .02px; stroke: #0b1a2e; stroke-width: .14px; }
+
+/* Look C players: marker circles on paper (or chalk on the board), handwritten names */
+[data-look="clipboard"] .player.home .disc { fill: var(--court); stroke: var(--rc); stroke-width: .11px; }
+[data-look="clipboard"] .player.home .role { fill: var(--rc); }
+[data-look="clipboard"] .player .name { fill: var(--fg); stroke: var(--court); stroke-width: .1px; font-weight: 700; font-size: .44px; }
+[data-look="clipboard"] .player.opp .disc { fill: var(--opp-disc); stroke: var(--muted); stroke-dasharray: .12 .08; stroke-width: .06px; }
+[data-look="clipboard"] .player.opp .role { fill: var(--muted); }
+[data-look="clipboard"] .court-label, [data-look="clipboard"] .bench-label { font-family: var(--font-hand); letter-spacing: .04px; }
+[data-look="clipboard"] .c-net-hi, [data-look="clipboard"] .c-antenna, [data-look="clipboard"] .c-antenna-tip { opacity: 0; }
+[data-look="clipboard"] .c-bench { stroke-dasharray: .15 .1; }
+[data-look="clipboard"] .brand h1 { font-family: var(--font-hand); text-transform: none; font-size: var(--fs-6); }
+
+/* Broadcast's app name: court orange, readable on white and on navy */
+[data-look="broadcast"] .brand h1 span { color: #d9661f; }
+@media (prefers-color-scheme: dark) { [data-look="broadcast"]:not([data-theme="light"]) .brand h1 span { color: #f08a4b; } }
+[data-look="broadcast"][data-theme="dark"] .brand h1 span { color: #f08a4b; }
 
 /* All 6 rotations sheet */
 #sheet {
-  width: min(1080px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 20px; border: 1px solid var(--line); border-radius: 12px;
-  background: var(--panel); color: var(--fg); box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
+  width: min(1080px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 20px; border: 1px solid var(--line); border-radius: var(--r-2);
+  background: var(--panel); color: var(--fg); box-shadow: var(--shadow-pop);
 }
 #sheet::backdrop { background: rgba(8, 12, 18, .55); }
-#sheet[open] { display: flex; flex-direction: column; gap: 14px; }
+#sheet[open] { display: flex; flex-direction: column; gap: 16px; }
 .sheet-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
-.sheet-head h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 24px; text-transform: uppercase; letter-spacing: .02em; }
+.sheet-head h2 { margin: 0; font-family: var(--font-body); font-weight: 700; font-size: var(--fs-5); }
 .sheet-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .sheet-grid li button {
-  width: 100%; display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: var(--radius); cursor: pointer;
+  width: 100%; display: flex; flex-direction: column; gap: 8px; padding: 8px; border-radius: var(--r-2); cursor: pointer;
   border: 1px solid var(--line); background: var(--soft); text-align: left;
 }
-.sheet-grid li button.on { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+.sheet-grid li button.on { border-color: var(--fg); box-shadow: 0 0 0 1px var(--fg); }
 @media (hover: hover) { .sheet-grid li button:hover { border-color: var(--muted); } }
 .sheet-grid .cap { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-.sheet-grid .cap b { font-family: var(--font-display); font-weight: 700; font-size: 17px; white-space: nowrap; }
-.sheet-grid .cap span { font-size: 12px; color: var(--muted); }
-.sheet-grid svg { width: 100%; height: auto; display: block; border-radius: 5px; }
+.sheet-grid .cap b { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-4); white-space: nowrap; }
+.sheet-grid .cap span { font-size: var(--fs-1); color: var(--muted); }
+.sheet-grid svg { width: 100%; height: auto; display: block; border-radius: var(--r-1); }
 .sheet-grid .player { cursor: inherit; }
 @media (max-width: 820px) {
   #sheet {
     width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; border: 0; border-radius: 0;
-    padding: max(14px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   }
   .sheet-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .sheet-grid li button { padding: 6px; }
@@ -295,7 +400,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
 #toast {
   position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 12px);
-  background: var(--fg); color: var(--panel); padding: 10px 16px; border-radius: 8px; font-size: 14px; max-width: min(440px, calc(100vw - 32px));
+  background: var(--fg); color: var(--panel); padding: 12px 16px; border-radius: var(--r-2); font-size: var(--fs-2); max-width: min(440px, calc(100vw - 32px));
   opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 10;
 }
 #toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -303,16 +408,16 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 /* Touch screens: finger-sized controls, 16px inputs so iOS doesn't zoom on focus, gesture list instead of shortcuts */
 @media (pointer: coarse) {
   .seg button { min-height: 40px; }
-  .btn { min-height: 42px; }
-  .btn.small { min-height: 38px; }
+  .btn { min-height: 44px; }
+  .btn.small { min-height: 40px; }
   .rt { min-height: 36px; }
   .x { width: 36px; height: 36px; }
-  .sq-row, .f-row { grid-template-columns: minmax(0, 1fr) auto 36px; }
+  .sq-row { grid-template-columns: minmax(0, 1fr) auto 36px; }
   .f-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 36px; }
   input[type="text"], select, .sq-row input[type="text"], .f-row select { font-size: 16px; }
   .check input { width: 20px; height: 20px; }
   .check { min-height: 32px; }
-  .roster li button { padding: 8px 6px; }
+  .roster li button { padding: 8px; }
 }
 @media (hover: none) and (pointer: coarse) {
   .mouse-only { display: none; }
@@ -326,53 +431,49 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   html, body { height: auto; }
   .app { grid-template-columns: 1fr; height: auto; }
   .stage {
-    gap: 10px;
-    padding: max(10px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 14px max(16px, env(safe-area-inset-left));
+    gap: 12px;
+    padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 16px max(16px, env(safe-area-inset-left));
   }
   .m-slot { display: block; }
   .m-slot:empty { display: none; }
   .m-only { display: inline-flex; }
   .m-slot .brand { align-items: center; }
-  .m-slot .brand h1 { font-size: 26px; }
+  .m-slot .brand h1 { font-size: var(--fs-5); }
   .m-slot .brand p { display: none; }
-  .toolbar { flex-wrap: nowrap; gap: 6px; }
-  .toolbar .row { flex-wrap: nowrap; gap: 6px; }
-  .seg button { padding: 6px 9px; }
-  .seg kbd { display: none; }
-  .scen-bar { gap: 6px; }
-  .scen-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .toolbar { flex-wrap: nowrap; gap: 8px; }
+  .toolbar .row { flex-wrap: nowrap; gap: 4px; }
+  .seg button { padding: 6px 8px; }
+  .scen-bar { gap: 8px; }
   .scen-bar .seg { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); width: 100%; }
   .scen-bar .seg button { justify-content: center; padding: 6px 4px; grid-column: span 3; }
   .scen-bar .seg button[data-scen^="vs"] { grid-column: span 4; }
   .scen-bar .long { display: none; }
   .scen-bar .short { display: inline; }
-  #scenCaption { font-size: 12.5px; line-height: 1.35; }
   .court-wrap { flex: none; }
   #board { height: auto; max-height: max(400px, calc(100svh - 196px)); }
-  .dock > .sec { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; }
+  .dock > .sec { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-2); padding: 12px; }
   .dock > .sec > h2 { display: none; }
   .dock .empty-sel { display: none; }
-  .panel { border-left: 0; border-top: 1px solid var(--line); padding: 22px max(16px, env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+  .panel { border-left: 0; border-top: 1px solid var(--line); padding: 24px max(16px, env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
 }
 /* Small phones: icon-only tools so the bar stays on one line */
 @media (max-width: 480px) {
   .toolbar .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .toolbar .seg button { padding: 6px 11px; }
-  .toolbar .btn.small { padding: 5px 10px; }
+  .toolbar .seg button { padding: 6px 12px; }
+  .toolbar .btn.small { padding: 4px 10px; }
   .toolbar .btn small { display: none; }
 }
 @media (max-width: 340px) {
   .toolbar .seg button { padding: 6px 8px; }
-  .toolbar .btn.small { padding: 5px 8px; }
+  .toolbar .btn.small { padding: 4px 8px; }
 }
 /* Phones turned sideways: keep the side panel, but slimmer, and squeeze the bars above the court */
 @media (orientation: landscape) and (max-height: 520px) and (min-width: 821px) {
   .app { grid-template-columns: minmax(0, 1fr) 330px; }
-  .stage { gap: 6px; padding: 8px 10px 8px max(12px, env(safe-area-inset-left)); }
-  .seg button { padding: 4px 9px; }
-  .seg kbd, #scenCaption, .scen-label { display: none; }
-  .scen-bar .seg button { padding: 4px 8px; font-size: 13px; }
-  .panel { padding: 14px max(14px, env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) 14px; gap: 18px; }
+  .stage { gap: 8px; padding: 8px 12px 8px max(12px, env(safe-area-inset-left)); }
+  .seg button { padding: 4px 8px; }
+  #scenCaption { display: none; }
+  .panel { padding: 16px max(16px, env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) 16px; gap: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
   #board.animating .player { transition: none; }
@@ -382,30 +483,39 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
 <script>
   try { const t = localStorage.getItem('set-theory-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+  // Visual theme (Broadcast by default, or Clipboard or Pro), chosen in Settings and remembered in this browser.
+  document.documentElement.dataset.look = 'broadcast';
+  try { const l = localStorage.getItem('set-theory-look'); if (l === 'pro' || l === 'broadcast' || l === 'clipboard') document.documentElement.dataset.look = l; } catch (e) {}
 </script>
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <symbol id="i-cw" viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-ccw" viewBox="0 0 16 16"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v3h3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 16 16"><path d="M3 5.5h10M10.5 3 13 5.5 10.5 8M13 10.5H3M5.5 8 3 10.5 5.5 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+</svg>
 <div class="app">
   <main class="stage">
     <div class="m-slot" id="slotBrand"></div>
     <div class="toolbar" role="toolbar" aria-label="Court tools">
       <div class="seg" id="tools">
-        <button type="button" data-tool="select" aria-pressed="true">
+        <button type="button" data-tool="select" aria-pressed="true" title="Move (V)">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 2l9 5-4 1.2L6.5 13z" stroke-linejoin="round"/></svg>
-          <span class="lbl">Move</span> <kbd>V</kbd></button>
-        <button type="button" data-tool="run" aria-pressed="false">
+          <span class="lbl">Move</span></button>
+        <button type="button" data-tool="run" aria-pressed="false" title="Run arrow (A)">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 13L13 3M7 3h6v6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="lbl">Run arrow</span> <kbd>A</kbd></button>
-        <button type="button" data-tool="ball" aria-pressed="false">
+          <span class="lbl">Run arrow</span></button>
+        <button type="button" data-tool="ball" aria-pressed="false" title="Ball path (B)">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 13L13 3" stroke-dasharray="2.4 2" stroke-linecap="round"/><path d="M7 3h6v6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="lbl">Ball path</span> <kbd>B</kbd></button>
+          <span class="lbl">Ball path</span></button>
       </div>
       <div class="row">
-        <button type="button" class="btn small" id="undo" title="Undo (Ctrl/⌘ Z)" aria-label="Undo">
+        <button type="button" class="btn small ghost" id="undo" title="Undo (Ctrl/⌘ Z)" aria-label="Undo">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 3L2.5 6l3 3M3 6h6.5a4 4 0 010 8H7" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span class="lbl">Undo</span></button>
-        <button type="button" class="btn small" id="redo" title="Redo (Shift Ctrl/⌘ Z)" aria-label="Redo">
+        <button type="button" class="btn small ghost" id="redo" title="Redo (Shift Ctrl/⌘ Z)" aria-label="Redo">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10.5 3l3 3-3 3M13 6H6.5a4 4 0 000 8H9" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span class="lbl">Redo</span></button>
-        <button type="button" class="btn small primary m-only" id="quickRotate" title="Rotate home one zone clockwise">↻ Rotate <small id="quickRot"></small></button>
+        <button type="button" class="btn small primary m-only" id="quickRotate" title="Rotate home one zone clockwise"><svg class="ic" aria-hidden="true"><use href="#i-cw"/></svg>Rotate <small id="quickRot"></small></button>
       </div>
     </div>
     <div class="scen-bar">
@@ -447,13 +557,11 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     <header class="brand">
       <div>
         <h1>Set <span>Theory</span></h1>
-        <p>Volleyball rotations, serve receive, attack and defense.</p>
+        <p>Rotations and game situations for 5-1 teams.</p>
       </div>
-      <div class="seg theme-seg" id="themeSeg" role="group" aria-label="Color theme">
-        <button type="button" data-theme-choice="auto" aria-pressed="true" title="Follow your device setting">Auto</button>
-        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
-        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
-      </div>
+      <button type="button" class="btn small" id="openShare" aria-haspopup="dialog">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4h10V9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Share</button>
     </header>
 
     <div class="note import" id="importBanner" hidden>
@@ -464,20 +572,6 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       </div>
     </div>
 
-    <section class="sec share" aria-labelledby="shareH">
-      <h2 id="shareH">Share <small>squad and court, no account needed</small></h2>
-      <div class="row">
-        <button type="button" class="btn primary" id="copyLink">Copy share link</button>
-      </div>
-      <input type="text" id="shareUrl" readonly hidden aria-label="Share link">
-      <div class="row">
-        <button type="button" class="btn" id="saveFile">Save file</button>
-        <button type="button" class="btn" id="openFile">Open file</button>
-        <input type="file" id="fileInput" accept=".json,application/json" hidden>
-      </div>
-      <label class="check" for="shareCourt"><input type="checkbox" id="shareCourt" checked> Include the court (player spots and arrows)</label>
-    </section>
-
     <div class="seg team-seg" id="panelTabs" role="tablist" aria-label="Panel">
       <button type="button" data-tab="board" aria-pressed="true">Board</button>
       <button type="button" data-tab="lineups" aria-pressed="false">Lineups</button>
@@ -486,10 +580,29 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
     <div id="tabBoard" class="tabbody">
 
-    <p class="note" id="exampleNote" hidden>This is an example lineup. Rename the players, or use Clear board below to start from scratch.</p>
+    <p class="note" id="exampleNote" hidden>This is an example lineup. Rename the players, or use Clear board at the bottom to start from scratch.</p>
 
-    <section class="sec" aria-labelledby="addH">
-      <h2 id="addH">Add player</h2>
+    <section class="sec" aria-labelledby="rotH">
+      <h2 id="rotH">Rotation</h2>
+      <div id="rotations"></div>
+      <div class="row rot-extra">
+        <button type="button" class="btn" id="openSheet">See all 6 rotations</button>
+        <label class="check" for="showZones"><input type="checkbox" id="showZones"> Zone numbers</label>
+      </div>
+    </section>
+
+    <section class="sec" id="selSec" aria-labelledby="selH">
+      <h2 id="selH">Selected</h2>
+      <div id="editor"></div>
+    </section>
+
+    <details class="sec fold" id="rosterFold">
+      <summary><h2 id="rosterH">Roster <small id="rosterCount"></small></h2></summary>
+      <div class="roster" id="roster"></div>
+    </details>
+
+    <details class="sec fold" id="addFold">
+      <summary><h2 id="addH">Add players</h2></summary>
       <div class="seg team-seg" id="addTeam">
         <button type="button" data-team="home" aria-pressed="true">Home</button>
         <button type="button" data-team="opp" aria-pressed="false">Opponent</button>
@@ -501,38 +614,14 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
         <label class="field" for="addRole" style="width: 128px">Role
           <select id="addRole"></select>
         </label>
-        <button type="submit" class="btn primary" style="align-self: flex-end">Add</button>
+        <button type="submit" class="btn" style="align-self: flex-end">Add</button>
       </form>
       <button type="button" class="btn" id="addSix">Add a full six (5-1, rotation 1)</button>
-    </section>
+      <p class="hint">To put a whole squad on court, use the Lineups tab.</p>
+    </details>
 
-    <section class="sec" id="selSec" aria-labelledby="selH">
-      <h2 id="selH">Selected</h2>
-      <div id="editor"></div>
-    </section>
-
-    <section class="sec" aria-labelledby="rotH">
-      <h2 id="rotH">Rotation <small>clockwise, one zone</small></h2>
-      <div id="rotations"></div>
-      <button type="button" class="btn" id="openSheet">See all 6 rotations</button>
-      <label class="check" for="showZones"><input type="checkbox" id="showZones"> Show zone numbers</label>
-    </section>
-
-    <section class="sec" aria-labelledby="rosterH">
-      <h2 id="rosterH">Roster</h2>
-      <div class="roster" id="roster"></div>
-    </section>
-
-    <section class="sec" aria-labelledby="boardH">
-      <h2 id="boardH">Board</h2>
-      <div class="row">
-        <button type="button" class="btn" id="clearArrows">Clear arrows</button>
-        <button type="button" class="btn danger" id="clearAll">Clear board</button>
-      </div>
-    </section>
-
-    <section class="sec" aria-labelledby="keysH">
-      <h2 id="keysH"><span class="mouse-only">Shortcuts</span><span class="touch-only">Gestures</span></h2>
+    <details class="sec fold">
+      <summary><h2 id="keysH"><span class="mouse-only">Shortcuts</span><span class="touch-only">Gestures</span></h2></summary>
       <dl class="keys touch-only">
         <dt>Tap</dt><dd>Select a player or arrow</dd>
         <dt>Drag</dt><dd>Move a player or arrow</dd>
@@ -552,7 +641,12 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
         <dt>R / Shift R</dt><dd>Rotate home forward / back</dd>
         <dt>⌘/Ctrl Z</dt><dd>Undo (add Shift to redo)</dd>
       </dl>
-    </section>
+    </details>
+
+    <div class="row board-actions">
+      <button type="button" class="btn ghost" id="clearArrows">Clear arrows</button>
+      <button type="button" class="btn ghost danger" id="clearAll">Clear board</button>
+    </div>
     </div>
 
     <div id="tabLineups" class="tabbody" hidden>
@@ -625,10 +719,43 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
         <div class="row"><button type="button" class="btn" id="clearCustom">Clear saved spots</button></div>
       </section>
 
-      <p class="note">Settings go out with share links, so teammates who open your link see the same system.</p>
+      <p class="note">These team settings go out with share links, so teammates who open your link see the same system.</p>
+
+      <section class="sec set-group" aria-labelledby="setThemeH">
+        <h2 id="setThemeH">Appearance <small>this device only</small></h2>
+        <div class="field"><span id="lookH">Theme</span>
+          <div class="seg team-seg" id="lookSeg" role="group" aria-labelledby="lookH">
+            <button type="button" data-look-choice="broadcast" aria-pressed="true" title="Match-day court and bold jersey numbers">Broadcast</button>
+            <button type="button" data-look-choice="clipboard" aria-pressed="false" title="Paper playbook with a line-drawn court">Clipboard</button>
+            <button type="button" data-look-choice="pro" aria-pressed="false" title="Calm neutrals and a sand court">Pro</button>
+          </div>
+        </div>
+        <div class="field"><span id="modeH">Light or dark</span>
+          <div class="seg team-seg" id="themeSeg" role="group" aria-labelledby="modeH">
+            <button type="button" data-theme-choice="auto" aria-pressed="true" title="Follow your device setting">Auto</button>
+            <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+            <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+          </div>
+        </div>
+      </section>
     </div>
   </aside>
 </div>
+<dialog id="shareDlg" class="small-dlg" aria-labelledby="shareH">
+  <div class="sheet-head">
+    <h2 id="shareH">Share</h2>
+    <button type="button" class="btn ghost small" id="shareClose" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+  </div>
+  <p class="hint">Send your squad, lineups and team settings. No account needed: whoever opens the link gets a copy on their own device.</p>
+  <button type="button" class="btn primary" id="copyLink">Copy share link</button>
+  <input type="text" id="shareUrl" readonly hidden aria-label="Share link">
+  <label class="check" for="shareCourt"><input type="checkbox" id="shareCourt" checked> Include the court (player spots and arrows)</label>
+  <div class="row share-files">
+    <button type="button" class="btn" id="saveFile">Save as file</button>
+    <button type="button" class="btn" id="openFile">Open a file</button>
+    <input type="file" id="fileInput" accept=".json,application/json" hidden>
+  </div>
+</dialog>
 <dialog id="sheet" aria-labelledby="sheetH">
   <div class="sheet-head">
     <div>
@@ -782,36 +909,25 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
   }
   function drawCourt() {
     const g = layers.court;
-    const css = getComputedStyle(document.documentElement);
-    const c = n => css.getPropertyValue(n).trim();
-    el('rect', { x: VB.x, y: VB.y, width: VB.w, height: VB.h, fill: c('--free') }, g);
-    el('rect', { x: 0, y: 0, width: 9, height: 18, fill: c('--court') }, g);
-    const line = c('--court-line');
-    const L = (x1, y1, x2, y2, extra = {}) => el('line', Object.assign({ x1, y1, x2, y2, stroke: line, 'stroke-width': 0.05 }, extra), g);
-    el('rect', { x: 0.025, y: 0.025, width: 8.95, height: 17.95, fill: 'none', stroke: line, 'stroke-width': 0.05 }, g);
+    el('rect', { class: 'c-free', x: VB.x, y: VB.y, width: VB.w, height: VB.h }, g);
+    el('rect', { class: 'c-court', x: 0, y: 0, width: 9, height: 18 }, g);
+    const L = (x1, y1, x2, y2, cls = 'c-line') => el('line', { class: cls, x1, y1, x2, y2 }, g);
+    el('rect', { class: 'c-line', x: 0.025, y: 0.025, width: 8.95, height: 17.95, fill: 'none' }, g);
     L(0, 9, 9, 9);
     // Attack lines with their dashed extensions past the sidelines
-    for (const y of [6, 12]) {
-      L(0, y, 9, y);
-      L(-1.75, y, 0, y, { 'stroke-dasharray': '0.15 0.2' });
-      L(9, y, 10.75, y, { 'stroke-dasharray': '0.15 0.2' });
-    }
+    for (const y of [6, 12]) { L(0, y, 9, y, 'c-line c-attack'); L(-1.75, y, 0, y, 'c-ext'); L(9, y, 10.75, y, 'c-ext'); }
     // Service zone marks behind each end line
     for (const [y1, y2] of [[0, -0.2], [18, 18.2]]) { L(0.025, y1, 0.025, y2); L(8.975, y1, 8.975, y2); }
     // Net, posts and antennas
-    el('line', { x1: -1, y1: 9, x2: 10, y2: 9, stroke: c('--net'), 'stroke-width': 0.16, 'stroke-linecap': 'round' }, g);
-    el('line', { x1: -1, y1: 9, x2: 10, y2: 9, stroke: '#ffffff', 'stroke-width': 0.03, opacity: 0.6 }, g);
-    for (const x of [-1, 10]) el('circle', { cx: x, cy: 9, r: 0.17, fill: c('--net') }, g);
-    for (const x of [0, 9]) {
-      el('circle', { cx: x, cy: 9, r: 0.12, fill: '#ffffff' }, g);
-      el('circle', { cx: x, cy: 9, r: 0.07, fill: '#d6352b' }, g);
-    }
+    L(-1, 9, 10, 9, 'c-net'); L(-1, 9, 10, 9, 'c-net-hi');
+    for (const x of [-1, 10]) el('circle', { class: 'c-post', cx: x, cy: 9, r: 0.17 }, g);
+    for (const x of [0, 9]) { el('circle', { class: 'c-antenna', cx: x, cy: 9, r: 0.12 }, g); el('circle', { class: 'c-antenna-tip', cx: x, cy: 9, r: 0.07 }, g); }
     for (const b of Object.values(BENCH)) {
-      el('rect', { x: b.x, y: b.y, width: b.w, height: b.h, rx: 0.2, fill: 'rgba(8, 18, 34, .35)', stroke: '#ffffff', 'stroke-opacity': 0.35, 'stroke-width': 0.03 }, g);
-      const bl = el('text', { x: b.x + b.w / 2, y: b.label, class: 'bench-label' }, g); bl.textContent = 'BENCH';
+      el('rect', { class: 'c-bench', x: b.x, y: b.y, width: b.w, height: b.h, rx: 0.2 }, g);
+      el('text', { x: b.x + b.w / 2, y: b.label, class: 'bench-label' }, g).textContent = 'BENCH';
     }
-    const t1 = el('text', { x: 4.5, y: -1.05, class: 'court-label' }, g); t1.textContent = 'OPPONENT';
-    const t2 = el('text', { x: 4.5, y: 19.45, class: 'court-label' }, g); t2.textContent = 'HOME';
+    el('text', { x: 4.5, y: -1.05, class: 'court-label' }, g).textContent = 'OPPONENT';
+    el('text', { x: 4.5, y: 19.45, class: 'court-label' }, g).textContent = 'HOME';
   }
 
   function renderZones() {
@@ -868,9 +984,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       if (!g) { g = makePlayerEl(p.id); pEls.set(p.id, g); layers.player.appendChild(g); }
       g.setAttribute('class', `player ${p.team}${ui.sel.has(p.id) ? ' selected' : ''}${p === server ? ' serving' : ''}${p === off ? ' waiting' : ''}`);
       g.style.transform = `translate(${p.x}px, ${p.y}px)`;
-      const disc = g.children[1];
-      disc.style.fill = roleVar(p.role);
-      disc.style.stroke = p.team === 'opp' ? roleVar(p.role) : '';
+      g.style.setProperty('--rc', roleVar(p.role));
       g.children[2].textContent = badge(p);
       g.children[2].style.fontSize = badge(p).length > 2 ? '0.34px' : '';
       g.children[3].textContent = p.name;
@@ -1002,8 +1116,8 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       const n = state.players.filter(p => onSide(p, team, basePos(p)) && p.role !== 'L').length;
       return `<div class="rot-row">
         <div class="rot-name">${TEAM_NAME[team]}<small>Rotation ${state.rot[team]} of 6 · ${n} on court</small></div>
-        <button type="button" class="btn small" data-rot="${team}" data-dir="-1" title="Rotate back one zone" aria-label="Rotate ${TEAM_NAME[team]} back">↺</button>
-        <button type="button" class="btn small primary" data-rot="${team}" data-dir="1" title="Rotate forward one zone">↻ Rotate</button>
+        <button type="button" class="btn small" data-rot="${team}" data-dir="-1" title="Rotate back one zone" aria-label="Rotate ${TEAM_NAME[team]} back"><svg class="ic" aria-hidden="true"><use href="#i-ccw"/></svg></button>
+        <button type="button" class="btn small${team === 'home' ? ' primary' : ''}" data-rot="${team}" data-dir="1" title="Rotate forward one zone (clockwise)"><svg class="ic" aria-hidden="true"><use href="#i-cw"/></svg>Rotate</button>
       </div>`;
     }).join('');
     $('#rotations').querySelectorAll('[data-rot]').forEach(b => b.onclick = () => rotate(b.dataset.rot, +b.dataset.dir));
@@ -1020,6 +1134,8 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       return `<div><h3>${TEAM_NAME[team]} · ${list.length}</h3>${list.length ? `<ul>${rows}</ul>` : `<p class="empty">No players yet.</p>`}</div>`;
     }).join('');
     $('#roster').innerHTML = out;
+    const n = t => state.players.filter(p => p.team === t).length;
+    $('#rosterCount').textContent = `${n('home')} home · ${n('opp')} opponent`;
     $('#roster').querySelectorAll('[data-pick]').forEach(b => b.onclick = e => {
       const id = b.dataset.pick;
       if (e.shiftKey || e.metaKey || e.ctrlKey) ui.sel.has(id) ? ui.sel.delete(id) : ui.sel.add(id);
@@ -1364,14 +1480,16 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     document.querySelectorAll('#scenarios button').forEach(b => b.setAttribute('aria-pressed', b.dataset.scen === name));
     const zs = zonesOf('home');
     const setter = zs.zone && Object.entries(zs.zone).find(([, p]) => p.role === 'S');
-    let where = setter ? `setter in zone ${setter[0]}` : '';
+    const parts = [];
+    if (name !== 'base') parts.push(['', SCEN_LABEL[name] + (OPP_HITTER[name] ? ` (${DEFENSE_NAME[state.settings.defense]})` : '')]);
+    parts.push(['Rotation', state.rot.home]);
+    if (setter) parts.push(['Setter', `zone ${setter[0]}`]);
     if (name === 'serve' && zs.zone) {
       const { off } = serveRoles();
-      where += `${where ? ' · ' : ''}${zs.zone[1].name || 'Zone 1'} serves${off ? ` · ${off.name || ROLE_NAME[off.role] || 'one player'} waits off court` : ''}`;
+      parts.push(['Serving', zs.zone[1].name || 'Zone 1']);
+      if (off) parts.push(['Off court', off.name || ROLE_NAME[off.role] || 'one player']);
     }
-    $('#scenCaption').textContent = name === 'base'
-      ? (where ? `Rotation spots · ${where}` : '')
-      : `${SCEN_LABEL[name]}${OPP_HITTER[name] ? ` (${DEFENSE_NAME[state.settings.defense]})` : ''}${where ? ' · ' + where : ''} · ${state.settings.keepScenarioDrags ? 'drag to save your own spots' : 'drag to try ideas'}, Base to go back`;
+    $('#scenCaption').innerHTML = parts.map(([k, v]) => `<span class="cap-part">${k ? `<small>${k}</small> ` : ''}<b>${esc(String(v))}</b></span>`).join('');
   }
 
   function setTool(t) {
@@ -1415,16 +1533,16 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
   function miniCourt(spots, players, server, off) {
     const s = el('svg', { viewBox: '-2 7.9 12.2 12.3', 'aria-hidden': 'true' });
-    el('rect', { x: -2, y: 7.9, width: 12.2, height: 12.3, style: 'fill: var(--free)' }, s);
-    el('rect', { x: 0, y: 9, width: 9, height: 9, style: 'fill: var(--court)' }, s);
-    const line = (x1, y1, x2, y2, w = 0.06) => el('line', { x1, y1, x2, y2, stroke: '#fff', 'stroke-width': w }, s);
-    line(0, 9, 0, 18); line(9, 9, 9, 18); line(0, 18, 9, 18); line(0, 12, 9, 12);
-    line(-0.6, 9, 9.6, 9, 0.14);
+    el('rect', { class: 'c-free', x: -2, y: 7.9, width: 12.2, height: 12.3 }, s);
+    el('rect', { class: 'c-court', x: 0, y: 9, width: 9, height: 9 }, s);
+    const line = (x1, y1, x2, y2, cls = 'c-line') => el('line', { class: cls, x1, y1, x2, y2 }, s);
+    line(0, 9, 0, 18); line(9, 9, 9, 18); line(0, 18, 9, 18); line(0, 12, 9, 12, 'c-line c-attack');
+    line(-0.6, 9, 9.6, 9, 'c-net');
     for (const p of players) {
       const at = spots[p.id];
       if (!at) continue;
-      const g = el('g', { class: `player home${p === server ? ' serving' : ''}${p === off ? ' waiting' : ''}`, transform: `translate(${at.x} ${at.y})` }, s);
-      el('circle', { class: 'disc', r: R, style: `fill: ${roleVar(p.role)}` }, g);
+      const g = el('g', { class: `player home${p === server ? ' serving' : ''}${p === off ? ' waiting' : ''}`, transform: `translate(${at.x} ${at.y})`, style: `--rc: ${roleVar(p.role)}` }, s);
+      el('circle', { class: 'disc', r: R }, g);
       el('text', { class: 'role', y: 0.02 }, g).textContent = badge(p);
       el('text', { class: 'name', y: 0.98 }, g).textContent = p.name;
       if (p === server) serveMark(g);
@@ -1681,6 +1799,14 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     document.querySelectorAll('#themeSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.themeChoice === choice));
   }
   document.querySelectorAll('#themeSeg button').forEach(b => b.onclick = () => setTheme(b.dataset.themeChoice));
+  // Visual theme: Broadcast, Clipboard or Pro. Each has a light and a dark version.
+  function setLook(l) {
+    document.documentElement.dataset.look = l;
+    try { localStorage.setItem('set-theory-look', l); } catch (e) {}
+    document.querySelectorAll('#lookSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lookChoice === l));
+  }
+  document.querySelectorAll('#lookSeg button').forEach(b => b.onclick = () => setLook(b.dataset.lookChoice));
+  setLook(document.documentElement.dataset.look);
   setTheme(document.documentElement.dataset.theme || 'auto');
   document.querySelectorAll('#scenarios button').forEach(b => b.onclick = () => setScenario(b.dataset.scen));
   document.querySelectorAll('#addTeam button').forEach(b => b.onclick = () => {
@@ -1780,7 +1906,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     $('#squad').innerHTML = state.squad.length ? state.squad.map(m => `<div class="sq-row" data-mid="${m.id}">
         <input type="text" class="sq-name" id="sq-${m.id}" value="${esc(m.name)}" maxlength="18" aria-label="Name">
         <div class="sq-roles">${SQUAD_ROLES.map(r => `<button type="button" class="rt" data-r="${r}" aria-pressed="${m.roles.includes(r)}" style="--rc: var(--r-${r})" title="${ROLE_NAME[r]}">${r}</button>`).join('')}</div>
-        <button type="button" class="x" aria-label="Remove ${esc(m.name)}">×</button>
+        <button type="button" class="x" aria-label="Remove ${esc(m.name)}"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
       </div>`).join('') : `<p class="empty">No one in the squad yet.</p>`;
   }
 
@@ -1789,7 +1915,7 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     $('#filters').innerHTML = ui.gen.filters.length ? ui.gen.filters.map((f, i) => `<div class="f-row" data-i="${i}">
         <select class="f-who" id="f-who-${i}" aria-label="Player">${state.squad.map(m => `<option value="${m.id}"${m.id === f.who ? ' selected' : ''}>${esc(m.name)}</option>`).join('')}</select>
         <select class="f-what" id="f-what-${i}" aria-label="Position">${FILTER_OPTS.map(([v, l]) => `<option value="${v}"${v === f.what ? ' selected' : ''}>${l}</option>`).join('')}</select>
-        <button type="button" class="x" aria-label="Remove filter">×</button>
+        <button type="button" class="x" aria-label="Remove filter"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
       </div>`).join('') : `<p class="hint">No filters. Showing every lineup.</p>`;
   }
 
@@ -1811,13 +1937,13 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
       return `<li class="lu${on ? ' on' : ''}">
         <div class="lu-top"><span class="lu-num">#${i + 1}</span>
           <div class="row">${on
-            ? `<button type="button" class="btn small" data-rot="-1" title="Rotate back one zone" aria-label="Rotate back">↺</button><button type="button" class="btn small primary" data-rot="1">↻ Rotate</button>`
+            ? `<button type="button" class="btn small" data-rot="-1" title="Rotate back one zone" aria-label="Rotate back"><svg class="ic" aria-hidden="true"><use href="#i-ccw"/></svg></button><button type="button" class="btn small primary" data-rot="1"><svg class="ic" aria-hidden="true"><use href="#i-cw"/></svg>Rotate</button>`
             : `<button type="button" class="btn small" data-place="${i}">Place on court</button>`}</div></div>
         <ol class="lu-seq">${seq.map((id, k) => `<li><span class="chip" style="background: var(--r-${g.roles[id]})">${slots[k]}</span>${nm(id)}</li>`).join('')}</ol>
         <p class="lu-meta">Libero: ${g.lib ? nm(g.lib) : 'none'} · Sitting: ${out.length ? out.join(', ') : 'nobody'}</p>
         <div class="lu-swaps">
-          <button type="button" class="btn small" data-swap="oh" data-g="${i}">⇄ Swap outsides</button>
-          <button type="button" class="btn small" data-swap="mb" data-g="${i}">⇄ Swap middles</button>
+          <button type="button" class="btn small" data-swap="oh" data-g="${i}"><svg class="ic" aria-hidden="true"><use href="#i-swap"/></svg>Swap outsides</button>
+          <button type="button" class="btn small" data-swap="mb" data-g="${i}"><svg class="ic" aria-hidden="true"><use href="#i-swap"/></svg>Swap middles</button>
         </div>
       </li>`;
     }).join('');
@@ -2065,12 +2191,16 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
 
   const describe = d => `${d.squad.length} ${d.squad.length === 1 ? 'person' : 'people'} in the squad${d.players ? `, plus ${d.players.length} players on the court` : ''}`;
 
+  $('#openShare').onclick = () => { $('#shareUrl').hidden = true; $('#shareDlg').showModal(); };
+  $('#shareClose').onclick = () => $('#shareDlg').close();
+  $('#shareDlg').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
   $('#copyLink').onclick = async () => {
     const url = location.href.split('#')[0] + '#s=' + toB64(JSON.stringify(sharePayload($('#shareCourt').checked)));
     const box = $('#shareUrl');
     box.value = url; box.hidden = false;
     try {
       await navigator.clipboard.writeText(url);
+      $('#shareDlg').close();
       toast('Share link copied. Anyone who opens it gets this squad.');
     } catch (e) {
       box.focus(); box.select();
@@ -2084,8 +2214,9 @@ input[type="text"]:focus, select:focus { border-color: var(--focus); outline: no
     a.download = 'set-theory.json';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    $('#shareDlg').close();
   };
-  $('#openFile').onclick = () => $('#fileInput').click();
+  $('#openFile').onclick = () => { $('#shareDlg').close(); $('#fileInput').click(); };
   $('#fileInput').onchange = async e => {
     const f = e.target.files[0];
     e.target.value = '';

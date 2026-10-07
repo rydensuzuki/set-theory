@@ -6,6 +6,8 @@ Scenario buttons above the court (Base, Serve receive, Attack, Defend: OH/MB/RS)
 
 Everything is one self-contained file, `index.html` (HTML + CSS + vanilla JS, no build step, no dependencies besides Google Fonts). Each viewer's board is saved in their own browser's `localStorage`. There is no server or shared database.
 
+Styling runs on CSS tokens: a type scale (`--fs-1`…`--fs-6`), two radii (`--r-1` controls, `--r-2` containers) and color tokens. Settings → Appearance picks a theme, set as `data-look` on `<html>` (`broadcast` is the default, plus `clipboard` and `pro`; saved in `localStorage` as `set-theory-look`), and Light/Dark/Auto as `data-theme` (`set-theory-theme`). Each theme sets the same tokens for light and dark, and the court is drawn with classes (`.c-court`, `.c-line`…) so themes recolor it without redrawing. Player circles get their role color as `--rc` on the player group.
+
 ## Commands
 
 ```bash
